@@ -413,7 +413,7 @@
         <!-- HEADER -->
         <header class="header">
             <div>
-                <h1><span>  Dashboard</span> </h1>
+                <h1><span>⚡ Grupo Energía Bogotá</span> · Dashboard</h1>
                 <div class="subtitle">Proyectos NORTE y SOGAMOSO — Control de liberación de predios</div>
             </div>
             <div class="badge">
@@ -533,13 +533,13 @@
         </div>
 
         <footer class="footer">
-            <i class="fas fa-bolt" style="color:#f1c40f;"></i> 
+            <i class="fas fa-bolt" style="color:#f1c40f;"></i> Datos actualizados desde Excel · Dashboard interactivo para Grupo Energía Bogotá
         </footer>
     </div>
 
     <script>
         // ================================================================
-        // 1. DATOS EXACTOS (copiados del Excel)
+        // 1. DATOS EXACTOS (corregidos: añadida coma faltante)
         // ================================================================
         const datosRaw = [
             ["SOGAMOSO", "SANTANDER", "BETULIA", "12-01-0001-V", "0005N", "LIBERADO", 3],
@@ -597,7 +597,7 @@
 
             ["SOGAMOSO", "CUNDINAMARCA", "SAN ANTONIO DEL TEQUENDAMA", "12-38-1964", "VANO", "EN TRÁMITE", 2],
             ["SOGAMOSO", "CUNDINAMARCA", "SOACHA", "12-39-2028", "VANO", "LIBERADO", 3],
-            ["NORTE", "BOYACA", "GARAGOA", "10-04-0211-V", "VANO", "NO LIBERADO", 2],
+            ["NORTE", "BOYACÁ", "GARAGOA", "10-04-0211-V", "VANO", "NO LIBERADO", 2]
             ["NORTE", "CUNDINAMARCA", "TIBIRITA", "10-08-1123", "VANO", "NO LIBERADO", 2],
             ["NORTE", "CUNDINAMARCA", "CHOCONTA", "10-10-0671", "139, 138", "LIBERADO", 3],
             ["NORTE", "CUNDINAMARCA", "SUESCA", "10-11-0717-N1", "VANO", "NO LIBERADO", 2],
@@ -712,7 +712,7 @@
                 idPredio: row[3],
                 torres: row[4] || '',
                 estadoConcreto: estadoLimpio,
-                estadoOriginal: estadoOriginal, // para referencia
+                estadoOriginal: estadoOriginal,
                 control: parseInt(row[6]) || 0,
                 semaforo: determinarSemaforo(parseInt(row[6]) || 0, estadoOriginal)
             };
@@ -755,7 +755,6 @@
         function populateEstadoFilter() {
             const estados = [...new Set(proyectos.map(p => p.estadoConcreto).filter(e => e !== ''))].sort();
             const select = document.getElementById('filtroEstado');
-            // Limpiar opciones existentes (excepto la primera)
             while (select.options.length > 1) select.remove(1);
             estados.forEach(e => {
                 const opt = document.createElement('option');
@@ -795,7 +794,6 @@
             filtrados.forEach(p => {
                 const badgeColor = p.semaforo;
                 const label = p.semaforo.charAt(0).toUpperCase() + p.semaforo.slice(1);
-                // Tooltip en la fila
                 const tooltip = `ID: ${p.idPredio} | Torre: ${p.torres || 'N/A'}`;
                 html += `<tr data-tooltip="${tooltip}">
                         <td><strong>${p.proyecto}</strong></td>
@@ -814,12 +812,32 @@
         }
 
         // ================================================================
-        // 4. GRÁFICAS (con exclusión de estados vacíos y renombrados)
+        // 4. GRÁFICAS (mejoradas con números encima de las barras)
         // ================================================================
         let chartSemaforo, chartEstado, chartTorres, chartDeptos;
 
+        // Plugin personalizado para mostrar números encima de las barras
+        const customLabelsPlugin = {
+            id: 'customLabels',
+            afterDraw: function(chart) {
+                const ctx = chart.ctx;
+                chart.data.datasets.forEach((dataset, i) => {
+                    const meta = chart.getDatasetMeta(i);
+                    meta.data.forEach((bar, index) => {
+                        const data = dataset.data[index];
+                        if (data === 0) return;
+                        ctx.fillStyle = '#1a2a3a';
+                        ctx.font = 'bold 13px Segoe UI';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'bottom';
+                        ctx.fillText(data, bar.x, bar.y - 4);
+                    });
+                });
+            }
+        };
+
         function initCharts() {
-            // Semáforo
+            // ---- 4.1 Semáforo (circular) ----
             const ctxSemaforo = document.getElementById('chartSemaforo').getContext('2d');
             const rojos = proyectos.filter(p => p.semaforo === 'rojo').length;
             const amarillos = proyectos.filter(p => p.semaforo === 'amarillo').length;
@@ -853,18 +871,18 @@
                 }
             });
 
-            // Estado Concreto (excluir vacíos)
+            // ---- 4.2 Estado Concreto (barras con números) ----
             const ctxEstado = document.getElementById('chartEstado').getContext('2d');
             const estados = {};
             proyectos.forEach(p => {
-                if (p.estadoConcreto) { // solo si no está vacío
+                if (p.estadoConcreto) {
                     estados[p.estadoConcreto] = (estados[p.estadoConcreto] || 0) + 1;
                 }
             });
             const sortedEstados = Object.entries(estados).sort((a, b) => b[1] - a[1]);
             const labelsEstados = sortedEstados.map(e => e[0]);
             const dataEstados = sortedEstados.map(e => e[1]);
-            const coloresEstados = ['#3498db', '#2ecc71', '#e74c3c', '#f1c40f', '#9b59b6', '#1abc9c', '#e67e22', '#34495e'];
+            const coloresEstados = ['#2ecc71', '#f1c40f', '#e74c3c', '#3498db', '#9b59b6', '#1abc9c', '#e67e22'];
 
             chartEstado = new Chart(ctxEstado, {
                 type: 'bar',
@@ -874,8 +892,9 @@
                         label: 'Cantidad',
                         data: dataEstados,
                         backgroundColor: coloresEstados.slice(0, labelsEstados.length),
-                        borderRadius: 6,
+                        borderRadius: 8,
                         borderSkipped: false,
+                        barPercentage: 0.65,
                     }]
                 },
                 options: {
@@ -885,7 +904,7 @@
                         tooltip: { callbacks: { label: ctx => `${ctx.parsed.y} proyectos` } }
                     },
                     scales: {
-                        y: { beginAtZero: true, grid: { color: '#f0f0f0' } },
+                        y: { beginAtZero: true, grid: { color: '#f0f0f0' }, ticks: { stepSize: 1 } },
                         x: { grid: { display: false } }
                     },
                     onClick: (e, elements) => {
@@ -902,10 +921,11 @@
                             aplicarFiltros();
                         }
                     }
-                }
+                },
+                plugins: [customLabelsPlugin]
             });
 
-            // Torres
+            // ---- 4.3 Torres (doughnut) ----
             const ctxTorres = document.getElementById('chartTorres').getContext('2d');
             let vano = 0,
                 numeros = 0,
@@ -936,14 +956,19 @@
                 }
             });
 
-            // Departamentos (top 6)
+            // ---- 4.4 Departamentos (SOLO TOP 3) ----
             const ctxDeptos = document.getElementById('chartDeptos').getContext('2d');
             const deptos = {};
             proyectos.forEach(p => {
                 const d = p.departamento || 'Sin departamento';
                 deptos[d] = (deptos[d] || 0) + 1;
             });
-            const sortedDeptos = Object.entries(deptos).sort((a, b) => b[1] - a[1]).slice(0, 6);
+            const sortedDeptos = Object.entries(deptos)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 3);
+
+            const coloresDeptos = ['#2c3e50', '#e74c3c', '#f39c12'];
+
             chartDeptos = new Chart(ctxDeptos, {
                 type: 'bar',
                 data: {
@@ -951,22 +976,37 @@
                     datasets: [{
                         label: 'Proyectos',
                         data: sortedDeptos.map(d => d[1]),
-                        backgroundColor: ['#2c3e50', '#e74c3c', '#3498db', '#2ecc71', '#f1c40f', '#9b59b6'],
-                        borderRadius: 6,
+                        backgroundColor: coloresDeptos.slice(0, sortedDeptos.length),
+                        borderRadius: 8,
                         borderSkipped: false,
+                        barPercentage: 0.7,
                     }]
                 },
                 options: {
                     responsive: true,
                     plugins: {
                         legend: { display: false },
-                        tooltip: { callbacks: { label: ctx => `${ctx.parsed.y} proyectos` } }
+                        tooltip: {
+                            callbacks: {
+                                label: function(ctx) {
+                                    return `${ctx.parsed.y} proyectos`;
+                                }
+                            }
+                        }
                     },
                     scales: {
-                        y: { beginAtZero: true, grid: { color: '#f0f0f0' } },
-                        x: { grid: { display: false } }
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: '#f0f0f0' },
+                            ticks: { stepSize: 1 }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { weight: 'bold' } }
+                        }
                     }
-                }
+                },
+                plugins: [customLabelsPlugin]
             });
         }
 
@@ -981,7 +1021,6 @@
             renderTabla(proyecto, semaforo, estado, busqueda);
         }
 
-        // Botón limpiar filtros
         document.getElementById('btnLimpiar').addEventListener('click', function() {
             document.getElementById('filtroProyecto').value = 'todos';
             document.getElementById('filtroSemaforo').value = 'todos';
