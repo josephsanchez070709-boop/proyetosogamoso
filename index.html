@@ -413,7 +413,7 @@
         <!-- HEADER -->
         <header class="header">
             <div>
-                <h1><span>⚡ Grupo Energía Bogotá</span> · Dashboard</h1>
+                <h1><span> Dashboard</h1>
                 <div class="subtitle">Proyectos NORTE y SOGAMOSO — Control de liberación de predios</div>
             </div>
             <div class="badge">
@@ -533,7 +533,7 @@
         </div>
 
         <footer class="footer">
-            <i class="fas fa-bolt" style="color:#f1c40f;"></i> Datos actualizados desde Excel · Dashboard interactivo para Grupo Energía Bogotá
+            <i class="fas fa-bolt" style="color:#f1c40f;"></i>
         </footer>
     </div>
 
@@ -542,140 +542,130 @@
         // 1. DATOS EXACTOS (corregidos: añadida coma faltante)
         // ================================================================
         const datosRaw = [
-            ["SOGAMOSO", "SANTANDER", "BETULIA", "12-01-0001-V", "0005N", "LIBERADO", 3],
-            ["SOGAMOSO", "SANTANDER", "SAN VICENTE DE CHUCURÍ", "12-02-0046-V", "0", "LIBERADO", 3],
-            ["SOGAMOSO", "SANTANDER", "EL CARMEN DE CHUCURÍ", "12-03-0080", "0", "LIBERADO", 3],
-
-
-            ["SOGAMOSO", "SANTANDER", "EL CARMEN DE CHUCURÍ", "12-03-0081-V", "0", "EN TRÁMITE", 2],
-
-            ["SOGAMOSO", "SANTANDER", "EL CARMEN DE CHUCURÍ", "12-03-0144", "139", "LIBERADO", 3],
-            ["SOGAMOSO", "BOYACÁ", "CALDAS", "12-16-0699", "", "", 2],
-
-
-            ["SOGAMOSO", "SANTANDER", "EL CARMEN DE CHUCURÍ", "12-03-0150", "0142N", "NO LIBERADO", 1],
-            ["SOGAMOSO", "SANTANDER", "SUCRE", "12-10-0468", "VANO", "LIBERADO", 3],
-            ["SOGAMOSO", "SANTANDER", "ALBANIA", "12-12-0573", "VANO", "LIBERADO", 3],
-            ["SOGAMOSO", "SANTANDER", "ALBANIA", "12-12-0599", "VANO", "LIBERADO", 3],
-            ["SOGAMOSO", "BOYACÁ", "SABOYÁ", "12-13-0606", "VANO", "LIBERADO", 3],
-            ["SOGAMOSO", "BOYACÁ", "BRICEÑO", "12-15-0660", "VANO", "LIBERADO", 3],
-
-
-            ["SOGAMOSO", "CUNDINAMARCA", "CARMEN DE CARUPA", "12-18-0959", "VANO", "EN TRÁMITE", 2],
-            ["SOGAMOSO", "CUNDINAMARCA", "TAUSA", "12-21-1275-01", "0033CN", "LIBERADO", 3],
-            ["SOGAMOSO", "CUNDINAMARCA", "NEMOCÓN", "12-22-1145", "VANO", "LIBERADO", 3],
-
-
-            ["SOGAMOSO", "CUNDINAMARCA", "NEMOCÓN", "12-22-1148-01", "VANO", "EN TRÁMITE", 2],
-            ["SOGAMOSO", "CUNDINAMARCA", "NEMOCÓN", "12-22-1149", "VANO", "LIBERADO", 3],
-            ["SOGAMOSO", "CUNDINAMARCA", "NEMOCÓN", "12-22-1154", "VANO", "LIBERADO", 3],
-
-
-            ["SOGAMOSO", "CUNDINAMARCA", "NEMOCÓN", "12-22-1157", "0525N", "NO LIBERADO", 1],
-            ["SOGAMOSO", "CUNDINAMARCA", "NEMOCÓN", "12-22-1169", "VANO", "EN TRÁMITE", 2],
-            ["SOGAMOSO", "CUNDINAMARCA", "NEMOCÓN", "12-22-1176", "VANO", "EN TRÁMITE", 2],
-
-
-            ["SOGAMOSO", "CUNDINAMARCA", "NEMOCÓN", "12-22-1185", "0020N, 0538N", "LIBERADO", 3],
-            ["SOGAMOSO", "CUNDINAMARCA", "COGUA", "12-24-1319-01", "VANO", "LIBERADO", 3],
-            ["SOGAMOSO", "CUNDINAMARCA", "COGUA", "12-24-1375", "VANO", "EN TRÁMITE", 2],
-
-
-            ["SOGAMOSO", "CUNDINAMARCA", "PACHO", "12-26-1495", "0107NN", "NO LIBERADO", 1],
-            ["SOGAMOSO", "CUNDINAMARCA", "LA VEGA", "12-29-1593", "VANO", "EN TRÁMITE", 2],
-            ["SOGAMOSO", "CUNDINAMARCA", "LA VEGA", "12-29-1614", "VANO", "EN TRÁMITE", 2],
-            ["SOGAMOSO", "CUNDINAMARCA", "SOACHA", "12-39-2027", "VANO", "EN TRÁMITE", 2],
-
-            ["SOGAMOSO", "CUNDINAMARCA", "ALBÁN", "12-31-1667", "VANO", "LIBERADO", 3],
-            ["SOGAMOSO", "CUNDINAMARCA", "LA MESA", "12-36-1807", "VANO", "EN TRÁMITE", 2],
-            ["SOGAMOSO", "CUNDINAMARCA", "LA MESA", "12-36-1810", "VANO", "EN TRÁMITE", 2],
-
-            ["SOGAMOSO", "CUNDINAMARCA", "TENA", "12-37-1860", "VANO", "LIBERADO", 3],
-            ["SOGAMOSO", "CUNDINAMARCA", "SAN VICENTE DE CHUCURÍ", "12-03-0079-V", "0100N", "NO LIBERADO", 1],
-            ["SOGAMOSO", "CUNDINAMARCA", "TENA", "12-37-1892", "VANO", "LIBERADO", 3],
-
-
-            ["SOGAMOSO", "CUNDINAMARCA", "SAN ANTONIO DEL TEQUENDAMA", "12-38-1964", "VANO", "EN TRÁMITE", 2],
-            ["SOGAMOSO", "CUNDINAMARCA", "SOACHA", "12-39-2028", "VANO", "LIBERADO", 3],
-            ["NORTE", "BOYACÁ", "GARAGOA", "10-04-0211-V", "VANO", "NO LIBERADO", 2]
-            ["NORTE", "CUNDINAMARCA", "TIBIRITA", "10-08-1123", "VANO", "NO LIBERADO", 2],
-            ["NORTE", "CUNDINAMARCA", "CHOCONTA", "10-10-0671", "139, 138", "LIBERADO", 3],
-            ["NORTE", "CUNDINAMARCA", "SUESCA", "10-11-0717-N1", "VANO", "NO LIBERADO", 2],
-            ["NORTE", "CUNDINAMARCA", "SUESCA", "10-11-1202", "VANO", "NO LIBERADO", 2],
-            ["NORTE", "CUNDINAMARCA", "NEMOCON", "10-14-1232", "VANO", "NO LIBERADO", 2],
-            ["NORTE", "CUNDINAMARCA", "NEMOCON", "10-14-1234", "VANO", "LIBERADO", 3],
-            ["NORTE", "CUNDINAMARCA", "NEMOCON", "10-14-1235", "VANO", "NO LIBERADO", 2],
-
-
-            ["NORTE", "CUNDINAMARCA", "NEMOCON", "10-14-1241-1", "VANO", "LIBERADO", 3],
-            ["NORTE", "CUNDINAMARCA", "NEMOCON", "10-14-1241-2", "VANO", "LIBERADO", 3],
-            ["NORTE", "CUNDINAMARCA", "NEMOCON", "10-14-1244", "10NA", "NO LIBERADO", 1],
-            ["NORTE", "CUNDINAMARCA", "NEMOCON", "10-14-1251", "10NB", "NO LIBERADO", 1],
-
-
-            ["NORTE", "CUNDINAMARCA", "NEMOCON", "10-14-1255", "VANO", "LIBERADO", 3],
-            ["NORTE", "CUNDINAMARCA", "NEMOCON", "10-14-1301", "VANO", "LIBERADO", 3],
-            ["NORTE", "CUNDINAMARCA", "COGUA", "10-15-0799-N2", "17NN", "LIBERADO", 3],
-            ["NORTE", "CUNDINAMARCA", "COGUA", "10-15-0808-V", "21NV", "LIBERADO", 3],
-            ["NORTE", "CUNDINAMARCA", "COGUA", "10-15-0810-V", "VANO", "LIBERADO", 3],
-            ["NORTE", "CUNDINAMARCA", "COGUA", "10-15-0813", "23AN", "LIBERADO", 3],
-
-            ["NORTE", "CUNDINAMARCA", "COGUA", "10-15-0814-V", "22N", "NO LIBERADO", 1],
-            ["NORTE", "CUNDINAMARCA", "ZIPAQUIRA", "10-16-0851-V", "36NV", "LIBERADO", 3],
-            ["NORTE", "CUNDINAMARCA", "ZIPAQUIRA", "10-16-0852-V", "VANO", "LIBERADO", 3],
-            ["NORTE", "CUNDINAMARCA", "ZIPAQUIRA", "10-16-0856", "VANO", "NO LIBERADO", 2],
-            ["NORTE", "CUNDINAMARCA", "ZIPAQUIRA", "10-16-0881-V", "44ANN", "LIBERADO", 3],
-            ["NORTE", "CUNDINAMARCA", "ZIPAQUIRA", "10-16-0903", "VANO", "NO LIBERADO", 2],
-
-            ["NORTE", "CUNDINAMARCA", "ZIPAQUIRA", "10-16-0912", "VANO", "LIBERADO", 3],
-            ["NORTE", "CUNDINAMARCA", "ZIPAQUIRA", "10-16-1142", "VANO", "LIBERADO", 3],
-            ["NORTE", "CUNDINAMARCA", "ZIPAQUIRA", "10-16-1148", "64NV", "NO LIBERADO", 1],
-            ["SOGAMOSO", "SANTANDER", "CHUCURRI", "12-03-0113", "0123N", "NO LIBERADO", 1],
-            ["NORTE", "CUNDINAMARCA", "TABIO", "10-17-0961", "VANO", "NO LIBERADO", 2],
-            ["NORTE", "CUNDINAMARCA", "SUBACHOQUE", "10-18-0998", "VANO", "NO LIBERADO", 3],
-            ["NORTE", "CUNDINAMARCA", "SUBACHOQUE", "10-18-1003", "VANO", "LIBERADO", 3],
-            ["NORTE", "CUNDINAMARCA", "SUBACHOQUE", "10-18-1022", "VANO", "LIBERADO", 3],
-            ["NORTE", "CUNDINAMARCA", "SUBACHOQUE", "10-18-1031", "107", "LIBERADO", 3],
-            ["NORTE", "CUNDINAMARCA", "MADRID", "10-19-1052-D5", "VANO", "LIBERADO", 3],
-            ["NORTE", "CUNDINAMARCA", "NEMOCON", "10-14-1243", "10NN", "NO LIBERADO", 1],
-            ["NORTE", "CUNDINAMARCA", "ZIPAQUIRA", "10-16-1141", "VANO", "NO LIBERADO", 3],
-            ["NORTE", "CUNDINAMARCA", "SUESCA", "10-11-1198", "VANO", "LIBERADO", 2],
-
-
-            ["NORTE", "CUNDINAMARCA", "NEMOCON", "10-14-1223", "VANO", "NO LIBERADO", 1],
-            ["SOGAMOSO", "CUNDINAMARCA", "COGUA", "12-24-1398-01 / 12-24-1400", "0067  y 0062N", "amparo en trámite", 1],
-            ["NORTE", "CUNDINAMARCA", "COGUA", "10-15-0799-N2", "17NN", "amparo en trámite", 1],
-            ["NORTE", "CUNDINAMARCA", "COGUA", "10-15-0804", "20NA", "amparo en trámite", 1],
-            ["NORTE", "CUNDINAMARCA", "COGUA", "10-15-0805-V", "20AV", "amparo en trámite", 1],
-            ["NORTE", "CUNDINAMARCA", "SUBACHOQUE", "10-18-0999 / 10-18-0999-A", "90", "amparo en trámite", 1],
-
-
-            ["SOGAMOSO", "SANTANDER", "VELEZ", "12-06-0211", "189", "LIBERADO", 3],
-            ["SOGAMOSO", "SANTANDER", "VELEZ", "12-06-0212", "torre", "LIBERADO", 1],
-            ["NORTE", "CUNDINAMARCA", "NEMOCON", "10-14-1223", "8NNA", "NO LIBERADO", 3],
-            ["NORTE", "CUNDINAMARCA", "NEMOCON", "10-14-1263", "12NE", "LIBERADO", 3],
-
-
-            ["NORTE", "CUNDINAMARCA", "CHOCONTA", "10-10-0676", "140NN*", "NO LIBERADO", 1],
-            ["NORTE", "CUNDINAMARCA", "CHOCONTA", "10-10-0685-V", "141A", "NO LIBERADO", 3],
-
+         
             
-            ["NORTE", "CUNDINAMARCA", "SUESCA", "10-11-1207", "6NB, 6NA", "DEMANDA RETIRADA", 2],
-            ["SOGAMOSO", "SANTANDER", "CARMEN DE CHUCURRI", "12-03-0111-V", "VANO", "NO LIBERADO", 2],
-            ["SOGAMOSO", "CUNDINAMARCA", "TAUSA", "12-21-1282-01", "VANO", "NO LIBERADO", 2],
-            ["SOGAMOSO", "CUNDINAMARCA", "NEMOCON", "12-22-1151", "VANO", "NO LIBERADO", 2],
-            ["SOGAMOSO", "CUNDINAMARCA", "NEMOCON", "12-22-1190", "VANO", "NO LIBERADO", 2],
-            ["SOGAMOSO", "CUNDINAMARCA", "SUESCA", "12-25-1231", "VANO", "NO LIBERADO", 2],
-            ["SOGAMOSO", "CUNDINAMARCA", "NEMOCON", "12-22-1194-01", "VANO", "NO LIBERADO", 2],
-            ["SOGAMOSO", "CUNDINAMARCA", "NEMOCON", "12-22-1265-03", "VANO", "NO LIBERADO", 2],
-            ["SOGAMOSO", "CUNDINAMARCA", "NEMOCON", "12-22-1270-02", "VANO", "NO LIBERADO", 2],
-            ["SOGAMOSO", "CUNDINAMARCA", "SUESCA", "12-25-1223", "VANO", "NO LIBERADO", 2],
-            ["SOGAMOSO", "CUNDINAMARCA", "SUESCA", "12-25-1225", "VANO", "NO LIBERADO", 2],
-            ["SOGAMOSO", "CUNDINAMARCA", "SUESCA", "12-25-1230", "VANO", "NO LIBERADO", 2],
-            ["SOGAMOSO", "CUNDINAMARCA", "PACHO", "12-26-1447", "VANO", "NO LIBERADO", 2],
-            ["SOGAMOSO", "CUNDINAMARCA", "LA VEGA", "12-29-1601-01", "VANO", "NO LIBERADO", 1],
-            ["SOGAMOSO", "SANTANDER", "VELEZ", "12-06-0211", "189", "amparo en trámite", 1]
-        ];
+    // ================================================================
+    // 1. PROYECTOS NORTE (ordenados por prioridad: rojo → amarillo → verde)
+    // ================================================================
+
+    // --- ROJO (crítico) ---
+    ["NORTE", "CUNDINAMARCA", "CHOCONTA", "10-10-0676", "140NN*", "NO LIBERADO", 1],
+    ["NORTE", "CUNDINAMARCA", "CHOCONTA", "10-10-0685-V", "141A", "NO LIBERADO", 3],
+    ["NORTE", "CUNDINAMARCA", "COGUA", "10-15-0799-N2", "17NN", "amparo en trámite", 1],
+    ["NORTE", "CUNDINAMARCA", "COGUA", "10-15-0804", "20NA", "amparo en trámite", 1],
+    ["NORTE", "CUNDINAMARCA", "COGUA", "10-15-0805-V", "20AV", "amparo en trámite", 1],
+    ["NORTE", "CUNDINAMARCA", "COGUA", "10-15-0814-V", "22N", "NO LIBERADO", 1],
+    ["NORTE", "CUNDINAMARCA", "NEMOCON", "10-14-1223", "VANO", "NO LIBERADO", 1],
+    ["NORTE", "CUNDINAMARCA", "NEMOCON", "10-14-1223", "8NNA", "NO LIBERADO", 3],
+    ["NORTE", "CUNDINAMARCA", "NEMOCON", "10-14-1232", "VANO", "NO LIBERADO", 2],
+    ["NORTE", "CUNDINAMARCA", "NEMOCON", "10-14-1235", "VANO", "NO LIBERADO", 2],
+    ["NORTE", "CUNDINAMARCA", "NEMOCON", "10-14-1243", "10NN", "NO LIBERADO", 1],
+    ["NORTE", "CUNDINAMARCA", "NEMOCON", "10-14-1244", "10NA", "NO LIBERADO", 1],
+    ["NORTE", "CUNDINAMARCA", "NEMOCON", "10-14-1251", "10NB", "NO LIBERADO", 1],
+    ["NORTE", "CUNDINAMARCA", "SUBACHOQUE", "10-18-0998", "VANO", "NO LIBERADO", 3],
+    ["NORTE", "CUNDINAMARCA", "SUBACHOQUE", "10-18-0999 / 10-18-0999-A", "90", "amparo en trámite", 1],
+    ["NORTE", "CUNDINAMARCA", "SUESCA", "10-11-0717-N1", "VANO", "NO LIBERADO", 2],
+    ["NORTE", "CUNDINAMARCA", "SUESCA", "10-11-1202", "VANO", "NO LIBERADO", 2],
+    ["NORTE", "CUNDINAMARCA", "SUESCA", "10-11-1207", "6NB, 6NA", "DEMANDA RETIRADA", 2],
+    ["NORTE", "CUNDINAMARCA", "TABIO", "10-17-0961", "VANO", "NO LIBERADO", 2],
+    ["NORTE", "CUNDINAMARCA", "TIBIRITA", "10-08-1123", "VANO", "NO LIBERADO", 2],
+    ["NORTE", "CUNDINAMARCA", "ZIPAQUIRA", "10-16-0856", "VANO", "NO LIBERADO", 2],
+    ["NORTE", "CUNDINAMARCA", "ZIPAQUIRA", "10-16-0903", "VANO", "NO LIBERADO", 2],
+    ["NORTE", "CUNDINAMARCA", "ZIPAQUIRA", "10-16-1141", "VANO", "NO LIBERADO", 3],
+    ["NORTE", "CUNDINAMARCA", "ZIPAQUIRA", "10-16-1148", "64NV", "NO LIBERADO", 1],
+    ["NORTE", "BOYACÁ", "GARAGOA", "10-04-0211-V", "VANO", "NO LIBERADO", 2],
+
+    // --- AMARILLO (alerta) ---
+    // (todos los de NORTE con control 2 que no sean rojos)
+    // Nota: ya incluidos arriba si tienen prioridad roja, así que aquí no hay adicionales
+
+    // --- VERDE (ok) ---
+    ["NORTE", "CUNDINAMARCA", "CHOCONTA", "10-10-0671", "139, 138", "LIBERADO", 3],
+    ["NORTE", "CUNDINAMARCA", "COGUA", "10-15-0799-N2", "17NN", "LIBERADO", 3],
+    ["NORTE", "CUNDINAMARCA", "COGUA", "10-15-0808-V", "21NV", "LIBERADO", 3],
+    ["NORTE", "CUNDINAMARCA", "COGUA", "10-15-0810-V", "VANO", "LIBERADO", 3],
+    ["NORTE", "CUNDINAMARCA", "COGUA", "10-15-0813", "23AN", "LIBERADO", 3],
+    ["NORTE", "CUNDINAMARCA", "MADRID", "10-19-1052-D5", "VANO", "LIBERADO", 3],
+    ["NORTE", "CUNDINAMARCA", "NEMOCON", "10-14-1234", "VANO", "LIBERADO", 3],
+    ["NORTE", "CUNDINAMARCA", "NEMOCON", "10-14-1241-1", "VANO", "LIBERADO", 3],
+    ["NORTE", "CUNDINAMARCA", "NEMOCON", "10-14-1241-2", "VANO", "LIBERADO", 3],
+    ["NORTE", "CUNDINAMARCA", "NEMOCON", "10-14-1255", "VANO", "LIBERADO", 3],
+    ["NORTE", "CUNDINAMARCA", "NEMOCON", "10-14-1263", "12NE", "LIBERADO", 3],
+    ["NORTE", "CUNDINAMARCA", "NEMOCON", "10-14-1301", "VANO", "LIBERADO", 3],
+    ["NORTE", "CUNDINAMARCA", "SUBACHOQUE", "10-18-1003", "VANO", "LIBERADO", 3],
+    ["NORTE", "CUNDINAMARCA", "SUBACHOQUE", "10-18-1022", "VANO", "LIBERADO", 3],
+    ["NORTE", "CUNDINAMARCA", "SUBACHOQUE", "10-18-1031", "107", "LIBERADO", 3],
+    ["NORTE", "CUNDINAMARCA", "SUESCA", "10-11-1198", "VANO", "LIBERADO", 2],
+    ["NORTE", "CUNDINAMARCA", "ZIPAQUIRA", "10-16-0851-V", "36NV", "LIBERADO", 3],
+    ["NORTE", "CUNDINAMARCA", "ZIPAQUIRA", "10-16-0852-V", "VANO", "LIBERADO", 3],
+    ["NORTE", "CUNDINAMARCA", "ZIPAQUIRA", "10-16-0881-V", "44ANN", "LIBERADO", 3],
+    ["NORTE", "CUNDINAMARCA", "ZIPAQUIRA", "10-16-0912", "VANO", "LIBERADO", 3],
+    ["NORTE", "CUNDINAMARCA", "ZIPAQUIRA", "10-16-1142", "VANO", "LIBERADO", 3],
+
+    // ================================================================
+    // 2. PROYECTOS SOGAMOSO (ordenados por prioridad: rojo → amarillo → verde)
+    // ================================================================
+
+    // --- ROJO (crítico) ---
+    ["SOGAMOSO", "SANTANDER", "EL CARMEN DE CHUCURÍ", "12-03-0150", "0142N", "NO LIBERADO", 1],
+    ["SOGAMOSO", "SANTANDER", "CHUCURRI", "12-03-0113", "0123N", "NO LIBERADO", 1],
+    ["SOGAMOSO", "CUNDINAMARCA", "COGUA", "12-24-1398-01 / 12-24-1400", "0067  y 0062N", "amparo en trámite", 1],
+    ["SOGAMOSO", "CUNDINAMARCA", "LA VEGA", "12-29-1601-01", "VANO", "NO LIBERADO", 1],
+    ["SOGAMOSO", "CUNDINAMARCA", "NEMOCÓN", "12-22-1157", "0525N", "NO LIBERADO", 1],
+    ["SOGAMOSO", "CUNDINAMARCA", "PACHO", "12-26-1495", "0107NN", "NO LIBERADO", 1],
+    ["SOGAMOSO", "CUNDINAMARCA", "PACHO", "12-26-1447", "VANO", "NO LIBERADO", 2],
+    ["SOGAMOSO", "CUNDINAMARCA", "SAN VICENTE DE CHUCURÍ", "12-03-0079-V", "0100N", "NO LIBERADO", 1],
+    ["SOGAMOSO", "SANTANDER", "VELEZ", "12-06-0212", "torre", "LIBERADO", 1],
+    ["SOGAMOSO", "SANTANDER", "VELEZ", "12-06-0211", "189", "amparo en trámite", 1],
+
+    // --- AMARILLO (alerta) ---
+    ["SOGAMOSO", "BOYACÁ", "CALDAS", "12-16-0699", "", "", 2],
+    ["SOGAMOSO", "CUNDINAMARCA", "CARMEN DE CARUPA", "12-18-0959", "VANO", "EN TRÁMITE", 2],
+    ["SOGAMOSO", "CUNDINAMARCA", "COGUA", "12-24-1375", "VANO", "EN TRÁMITE", 2],
+    ["SOGAMOSO", "CUNDINAMARCA", "LA MESA", "12-36-1807", "VANO", "EN TRÁMITE", 2],
+    ["SOGAMOSO", "CUNDINAMARCA", "LA MESA", "12-36-1810", "VANO", "EN TRÁMITE", 2],
+    ["SOGAMOSO", "CUNDINAMARCA", "LA VEGA", "12-29-1593", "VANO", "EN TRÁMITE", 2],
+    ["SOGAMOSO", "CUNDINAMARCA", "LA VEGA", "12-29-1614", "VANO", "EN TRÁMITE", 2],
+    ["SOGAMOSO", "CUNDINAMARCA", "NEMOCÓN", "12-22-1148-01", "VANO", "EN TRÁMITE", 2],
+    ["SOGAMOSO", "CUNDINAMARCA", "NEMOCÓN", "12-22-1169", "VANO", "EN TRÁMITE", 2],
+    ["SOGAMOSO", "CUNDINAMARCA", "NEMOCÓN", "12-22-1176", "VANO", "EN TRÁMITE", 2],
+    ["SOGAMOSO", "CUNDINAMARCA", "NEMOCON", "12-22-1151", "VANO", "NO LIBERADO", 2],
+    ["SOGAMOSO", "CUNDINAMARCA", "NEMOCON", "12-22-1190", "VANO", "NO LIBERADO", 2],
+    ["SOGAMOSO", "CUNDINAMARCA", "NEMOCON", "12-22-1194-01", "VANO", "NO LIBERADO", 2],
+    ["SOGAMOSO", "CUNDINAMARCA", "NEMOCON", "12-22-1265-03", "VANO", "NO LIBERADO", 2],
+    ["SOGAMOSO", "CUNDINAMARCA", "NEMOCON", "12-22-1270-02", "VANO", "NO LIBERADO", 2],
+    ["SOGAMOSO", "CUNDINAMARCA", "SAN ANTONIO DEL TEQUENDAMA", "12-38-1964", "VANO", "EN TRÁMITE", 2],
+    ["SOGAMOSO", "CUNDINAMARCA", "SOACHA", "12-39-2027", "VANO", "EN TRÁMITE", 2],
+    ["SOGAMOSO", "CUNDINAMARCA", "SUESCA", "12-25-1223", "VANO", "NO LIBERADO", 2],
+    ["SOGAMOSO", "CUNDINAMARCA", "SUESCA", "12-25-1225", "VANO", "NO LIBERADO", 2],
+    ["SOGAMOSO", "CUNDINAMARCA", "SUESCA", "12-25-1230", "VANO", "NO LIBERADO", 2],
+    ["SOGAMOSO", "CUNDINAMARCA", "SUESCA", "12-25-1231", "VANO", "NO LIBERADO", 2],
+    ["SOGAMOSO", "CUNDINAMARCA", "TAUSA", "12-21-1282-01", "VANO", "NO LIBERADO", 2],
+    ["SOGAMOSO", "SANTANDER", "CARMEN DE CHUCURRI", "12-03-0111-V", "VANO", "NO LIBERADO", 2],
+    ["SOGAMOSO", "SANTANDER", "EL CARMEN DE CHUCURÍ", "12-03-0081-V", "0", "EN TRÁMITE", 2],
+
+    // --- VERDE (ok) ---
+    ["SOGAMOSO", "BOYACÁ", "BRICEÑO", "12-15-0660", "VANO", "LIBERADO", 3],
+    ["SOGAMOSO", "BOYACÁ", "SABOYÁ", "12-13-0606", "VANO", "LIBERADO", 3],
+    ["SOGAMOSO", "CUNDINAMARCA", "ALBÁN", "12-31-1667", "VANO", "LIBERADO", 3],
+    ["SOGAMOSO", "CUNDINAMARCA", "COGUA", "12-24-1319-01", "VANO", "LIBERADO", 3],
+    ["SOGAMOSO", "CUNDINAMARCA", "NEMOCÓN", "12-22-1145", "VANO", "LIBERADO", 3],
+    ["SOGAMOSO", "CUNDINAMARCA", "NEMOCÓN", "12-22-1149", "VANO", "LIBERADO", 3],
+    ["SOGAMOSO", "CUNDINAMARCA", "NEMOCÓN", "12-22-1154", "VANO", "LIBERADO", 3],
+    ["SOGAMOSO", "CUNDINAMARCA", "NEMOCÓN", "12-22-1185", "0020N, 0538N", "LIBERADO", 3],
+    ["SOGAMOSO", "CUNDINAMARCA", "SOACHA", "12-39-2028", "VANO", "LIBERADO", 3],
+    ["SOGAMOSO", "CUNDINAMARCA", "TAUSA", "12-21-1275-01", "0033CN", "LIBERADO", 3],
+    ["SOGAMOSO", "CUNDINAMARCA", "TENA", "12-37-1860", "VANO", "LIBERADO", 3],
+    ["SOGAMOSO", "CUNDINAMARCA", "TENA", "12-37-1892", "VANO", "LIBERADO", 3],
+    ["SOGAMOSO", "SANTANDER", "ALBANIA", "12-12-0573", "VANO", "LIBERADO", 3],
+    ["SOGAMOSO", "SANTANDER", "ALBANIA", "12-12-0599", "VANO", "LIBERADO", 3],
+    ["SOGAMOSO", "SANTANDER", "BETULIA", "12-01-0001-V", "0005N", "LIBERADO", 3],
+    ["SOGAMOSO", "SANTANDER", "EL CARMEN DE CHUCURÍ", "12-03-0080", "0", "LIBERADO", 3],
+    ["SOGAMOSO", "SANTANDER", "EL CARMEN DE CHUCURÍ", "12-03-0144", "139", "LIBERADO", 3],
+    ["SOGAMOSO", "SANTANDER", "SAN VICENTE DE CHUCURÍ", "12-02-0046-V", "0", "LIBERADO", 3],
+    ["SOGAMOSO", "SANTANDER", "SUCRE", "12-10-0468", "VANO", "LIBERADO", 3],
+    ["SOGAMOSO", "SANTANDER", "VELEZ", "12-06-0211", "189", "LIBERADO", 3]
+];
 
         // ================================================================
         // 2. PROCESAR DATOS -> semáforo y limpieza de estados
