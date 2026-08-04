@@ -25,8 +25,7 @@
    - [x] Comparativa apilada NORTE vs SOGAMOSO
    - [x] Top 8 municipios
    - [x] Distribución de torres
-   - [x] Gauge radial de liberación
-   - [x] Tendencia semanal (generada)
+- [x] Gauge radial de liberación
    - [x] Proyectos por departamento
 
 5. **Tabla avanzada**

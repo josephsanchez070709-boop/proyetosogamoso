@@ -732,11 +732,7 @@
                 <h3><i class="fas fa-gauge-high"></i> Indicador de Liberación</h3>
                 <div class="chart-body"><canvas id="chartGauge"></canvas></div>
             </div>
-            <div class="chart-box">
-                <h3><i class="fas fa-chart-line"></i> Tendencia · Últimos 7 días</h3>
-                <div class="chart-body"><canvas id="chartTendencia"></canvas></div>
-            </div>
-            <div class="chart-box">
+<div class="chart-box">
                 <h3><i class="fas fa-map-marked-alt"></i> Predios por departamento</h3>
                 <div class="chart-body"><canvas id="chartDeptos"></canvas></div>
             </div>
@@ -851,7 +847,7 @@
             ["NORTE", "CUNDINAMARCA", "CHOCONTA", "10-10-0685-V", "141A", "NO LIBERADO", 3],
             ["NORTE", "CUNDINAMARCA", "COGUA", "10-15-0799-N2", "17NN", "amparo en trámite", 1],
             ["NORTE", "CUNDINAMARCA", "COGUA", "10-15-0804", "20NA", "amparo en trámite", 1],
-            ["NORTE", "CUNDINAMARCA", "COGUA", "10-15-0805-V", "20AV", "amparo en trámite", 1],
+["NORTE", "CUNDINAMARCA", "COGUA", "10-15-0805-V", "20AV", "amparo en trámite", 1],
             ["NORTE", "CUNDINAMARCA", "COGUA", "10-15-0814-V", "22N", "NO LIBERADO", 1],
             ["NORTE", "CUNDINAMARCA", "NEMOCON", "10-14-1223", "VANO", "NO LIBERADO", 1],
             ["NORTE", "CUNDINAMARCA", "NEMOCON", "10-14-1223", "8NNA", "NO LIBERADO", 3],
@@ -1279,7 +1275,7 @@
             }
         };
 
-        let chartSemaforo, chartEstado, chartComparativa, chartMunicipios, chartTorres, chartGauge, chartTendencia, chartDeptos;
+let chartSemaforo, chartEstado, chartComparativa, chartMunicipios, chartTorres, chartGauge, chartDeptos;
 
         function initCharts() {
             const rojos = proyectos.filter(p => p.semaforo === 'rojo').length;
@@ -1526,48 +1522,7 @@
                 }]
             });
 
-            /* ---- 6.7 Tendencia últimos 7 días (simulada) ---- */
-            const ctxTend = document.getElementById('chartTendencia').getContext('2d');
-            const dias = [];
-            const fec = new Date();
-            fec.setDate(fec.getDate() - 6);
-            for (let i = 0; i < 7; i++) {
-                const d = new Date(fec);
-                dias.push(d.toLocaleDateString('es-CO', { weekday: 'short' }));
-                fec.setDate(fec.getDate() + 1);
-            }
-            const base = Math.round(verdes / 7);
-            const vals = dias.map((_, i) => Math.max(1, Math.round(base * (0.7 + i * 0.08)) + (i % 3)));
-            chartTendencia = new Chart(ctxTend, {
-                type: 'line',
-                data: {
-                    labels: dias,
-                    datasets: [{
-                        label: 'Liberaciones acumuladas',
-                        data: vals,
-                        borderColor: '#00a651',
-                        backgroundColor: 'rgba(0,166,81,0.12)',
-                        fill: true,
-                        tension: 0.4,
-                        pointRadius: 4,
-                        pointBackgroundColor: '#00a651'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: { callbacks: { label: c => ` ${c.parsed.y} liberaciones` } }
-                    },
-                    scales: {
-                        y: { beginAtZero: true, grid: { color: gridColor() }, ticks: { stepSize: 1, color: textColor(), font: baseFont() } },
-                        x: { grid: { display: false }, ticks: { color: textColor(), font: baseFont() } }
-                    }
-                }
-            });
-
-            /* ---- 6.8 Predios por departamento ---- */
+/* ---- 6.7 Predios por departamento ---- */
             const ctxDeptos = document.getElementById('chartDeptos').getContext('2d');
             const deptos = {};
             proyectos.forEach(p => { const d = p.departamento || 'Sin departamento'; deptos[d] = (deptos[d] || 0) + 1; });
@@ -1630,8 +1585,12 @@
         /* ================================================================
            8. ALERTAS
         ================================================================ */
-        function renderAlertas() {
-            const criticos = proyectos.filter(p => p.semaforo === 'rojo');
+function renderAlertas() {
+            // Solo alertan los predios con estado "amparo en trámite"
+            const criticos = proyectos.filter(p => {
+                const e = (p.estadoOriginal || '').toUpperCase().trim();
+                return e === 'AMPARO EN TRÁMITE' || e === 'AMPARO EN TRAMITE';
+            });
             document.getElementById('alertCount').textContent = criticos.length;
             document.getElementById('alertsBadge').textContent = criticos.length;
             const list = document.getElementById('alertsList');
@@ -1693,9 +1652,7 @@
                 chartComparativa && chartComparativa.update();
                 chartMunicipios && chartMunicipios.update();
                 chartTorres && chartTorres.update();
-                chartGauge && chartGauge.update();
-                chartTendencia && chartTendencia.update();
-                chartDeptos && chartDeptos.update();
+chartGauge && chartGauge.update();
             } catch (err) { console.warn(err); }
         }
         document.getElementById('btnTema').addEventListener('click', () => {
