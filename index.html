@@ -753,9 +753,9 @@
                     <label for="filtroSemaforo"><i class="fas fa-traffic-light"></i> Semáforo</label>
                     <select id="filtroSemaforo">
                         <option value="todos">Todos</option>
-                        <option value="rojo">🔴 Rojo</option>
-                        <option value="amarillo">🟡 Amarillo</option>
-                        <option value="verde">🟢 Verde</option>
+<option value="rojo">🔴 Alto</option>
+                        <option value="amarillo">🟡 Medio</option>
+                        <option value="verde">🟢 Bajo</option>
                     </select>
                 </div>
                 <div>
@@ -1007,7 +1007,10 @@
             requestAnimationFrame(update);
         }
 
-        function semaforoLabel(s) {
+function semaforoLabel(s) {
+            if (s === 'rojo') return 'Alto';
+            if (s === 'amarillo') return 'Medio';
+            if (s === 'verde') return 'Bajo';
             return s.charAt(0).toUpperCase() + s.slice(1);
         }
 
@@ -1289,7 +1292,7 @@ let chartSemaforo, chartEstado, chartComparativa, chartMunicipios, chartTorres, 
             chartSemaforo = new Chart(ctxSemaforo, {
                 type: 'doughnut',
                 data: {
-                    labels: ['🔴 Rojo', '🟡 Amarillo', '🟢 Verde'],
+labels: ['🔴 Alto', '🟡 Medio', '🟢 Bajo'],
                     datasets: [{
                         data: [rojos, amarillos, verdes],
                         backgroundColor: ['#ef4444', '#f1c40f', '#22c55e'],
