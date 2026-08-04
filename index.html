@@ -1,0 +1,1770 @@
+﻿<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GEB Dashboard — Proyectos NORTE y SOGAMOSO</title>
+    <meta name="description" content="Dashboard profesional de control de liberación de predios GEB para los proyectos NORTE y SOGAMOSO." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        /* ========== 1. VARIABLES DE TEMA ========== */
+        :root {
+            --bg: #eef2f7;
+            --card: #ffffff;
+            --text: #0f172a;
+            --text-soft: #5b6b7f;
+            --muted: #94a3b8;
+            --border: #e2e8f0;
+            --table-head: #f8fafc;
+            --row-hover: #f1f5f9;
+            --shadow: 0 10px 30px rgba(15, 30, 60, 0.06), 0 2px 8px rgba(15, 30, 60, 0.04);
+            --shadow-hover: 0 22px 50px rgba(15, 30, 60, 0.14);
+            --header-grad: linear-gradient(120deg, #002a5c 0%, #0066b3 55%, #00875a 130%);
+            --primary: #0072bc;
+            --primary-soft: #e6f3fc;
+            --primary-2: #00a651;
+            --chip-bg: #e0f2fe;
+            --chip-text: #0369a1;
+            --modal-bg: rgba(15, 23, 42, 0.55);
+            --chart-text: #64748b;
+            --chart-grid: rgba(0, 0, 0, 0.06);
+            --sem-rojo: #ef4444;
+            --sem-amarillo: #f1c40f;
+            --sem-verde: #22c55e;
+            --blob-1: rgba(0, 114, 188, 0.12);
+            --blob-2: rgba(0, 166, 81, 0.12);
+            --blob-3: rgba(241, 196, 15, 0.08);
+            --input-bg: #f8fafc;
+            --mark-bg: #fef08a;
+        }
+        [data-theme="dark"] {
+            --bg: #070f1e;
+            --card: #101c33;
+            --text: #e2e8f0;
+            --text-soft: #9db0c7;
+            --muted: #64748b;
+            --border: #1c2b47;
+            --table-head: #15233e;
+            --row-hover: #162740;
+            --header-grad: linear-gradient(120deg, #030e1f 0%, #063a63 55%, #075a3d 130%);
+            --shadow: 0 12px 34px rgba(0, 0, 0, 0.45);
+            --shadow-hover: 0 24px 54px rgba(0, 0, 0, 0.6);
+            --primary: #38bdf8;
+            --primary-soft: #0e2a44;
+            --chip-bg: #13324a;
+            --chip-text: #7dd3fc;
+            --modal-bg: rgba(2, 6, 18, 0.75);
+            --chart-text: #8ea3c0;
+            --chart-grid: rgba(148, 163, 184, 0.12);
+            --blob-1: rgba(0, 150, 255, 0.1);
+            --blob-2: rgba(0, 200, 120, 0.08);
+            --blob-3: rgba(241, 196, 15, 0.06);
+            --input-bg: #0a1526;
+            --mark-bg: #7c5314;
+        }
+
+        /* ========== 2. RESET / BASE ========== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 22px 18px 40px;
+            transition: background 0.4s ease, color 0.3s ease;
+            position: relative;
+        }
+        .bg-blob {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(70px);
+            z-index: -1;
+            pointer-events: none;
+            transition: opacity 0.5s;
+        }
+        .bg-blob-1 { width: 480px; height: 480px; background: var(--blob-1); top: -140px; left: -120px; }
+        .bg-blob-2 { width: 420px; height: 420px; background: var(--blob-2); top: 30%; right: -140px; }
+        .bg-blob-3 { width: 380px; height: 380px; background: var(--blob-3); bottom: -120px; left: 30%; }
+        ::-webkit-scrollbar { width: 10px; height: 10px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 20px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+        .container { max-width: 1560px; margin: 0 auto; }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulseDot {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.35); opacity: 0.6; }
+        }
+        @keyframes floatGlow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+
+        /* ========== 3. HEADER ========== */
+        .header {
+            background: var(--header-grad);
+            color: #fff;
+            padding: 26px 32px;
+            border-radius: 26px;
+            margin-bottom: 26px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 18px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 45px rgba(0, 40, 80, 0.35);
+            animation: fadeUp 0.6s ease both;
+        }
+        .header::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(600px 180px at 90% 10%, rgba(255, 255, 255, 0.12), transparent 60%);
+            pointer-events: none;
+        }
+        .header::after {
+            content: "⚡";
+            position: absolute;
+            right: 24px;
+            bottom: -22px;
+            font-size: 130px;
+            opacity: 0.09;
+            transform: rotate(-10deg);
+            filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.25));
+        }
+        .header-left { display: flex; align-items: center; gap: 16px; position: relative; z-index: 1; }
+        .logo {
+            width: 58px; height: 58px; border-radius: 18px;
+            background: linear-gradient(135deg, #f1c40f, #f39c12);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 28px; color: #002a5c;
+            box-shadow: 0 10px 22px rgba(241, 196, 15, 0.45);
+            animation: floatGlow 3.5s ease-in-out infinite;
+        }
+        .header h1 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 27px;
+            letter-spacing: 0.5px;
+            line-height: 1.15;
+            background: linear-gradient(90deg, #fff, #bde3ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .header h1 .energis { font-weight: 300; }
+        .header .subtitle { font-size: 13.5px; opacity: 0.85; margin-top: 3px; font-weight: 400; }
+        .header .subtitle i { margin-right: 5px; color: #7df0b0; }
+        .header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 12px; position: relative; z-index: 1; }
+        .clock-box {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            border-radius: 16px;
+            padding: 8px 18px;
+            text-align: center;
+            min-width: 158px;
+        }
+        .clock-box #relojTiempo { font-family: 'Outfit', monospace; font-size: 20px; font-weight: 700; letter-spacing: 1px; }
+        .clock-box #relojFecha { font-size: 11.5px; opacity: 0.85; text-transform: capitalize; }
+        .header-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        .btn {
+            border: none; cursor: pointer;
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 10px 18px; border-radius: 14px;
+            font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13.5px;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.14);
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+        .btn:hover { transform: translateY(-2px); background: rgba(255, 255, 255, 0.24); box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2); }
+        .btn:active { transform: translateY(0); }
+        .btn .badge-btn {
+            background: #ef4444; color: #fff; border-radius: 30px;
+            font-size: 11px; font-weight: 800; padding: 1px 7px; margin-left: 2px;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.25);
+        }
+
+        /* ========== 4. TARJETAS KPI ========== */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 18px;
+            margin-bottom: 26px;
+        }
+        .card {
+            background: var(--card);
+            border-radius: 22px;
+            padding: 22px 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            border-left: 6px solid var(--muted);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s;
+            animation: fadeUp 0.6s ease both;
+        }
+        .card::after {
+            content: "";
+            position: absolute; right: -40px; top: -40px;
+            width: 110px; height: 110px; border-radius: 50%;
+            background: currentColor; opacity: 0.05;
+        }
+        .card:hover { transform: translateY(-7px); box-shadow: var(--shadow-hover); }
+        .card .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+        .card .icon {
+            width: 46px; height: 46px; border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; background: var(--primary-soft); color: var(--primary);
+        }
+        .card .label {
+            font-size: 12px; color: var(--text-soft);
+            text-transform: uppercase; letter-spacing: 0.6px; font-weight: 700; margin-bottom: 2px;
+        }
+        .card .value { font-family: 'Outfit', sans-serif; font-size: 40px; font-weight: 800; line-height: 1; margin: 6px 0 6px; }
+        .card .sub { font-size: 12.5px; color: var(--text-soft); display: flex; align-items: center; gap: 6px; }
+        .card .sub .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; animation: pulseDot 2s infinite; }
+        .card.total { border-left-color: var(--primary); }
+        .card.rojo { border-left-color: var(--sem-rojo); }
+        .card.amarillo { border-left-color: var(--sem-amarillo); }
+        .card.verde { border-left-color: var(--sem-verde); }
+        .card.liberacion { border-left-color: var(--primary-2); }
+        .card.liberacion .ring-wrap { position: relative; width: 80px; height: 80px; margin: 4px auto 0; }
+        .card.liberacion .ring-wrap svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+        .card.liberacion .ring-bg { fill: none; stroke: var(--border); stroke-width: 9; }
+        .card.liberacion .ring-fg { fill: none; stroke-width: 9; stroke-linecap: round; transition: stroke-dashoffset 1.4s cubic-bezier(0.65, 0, 0.35, 1); }
+        .card.liberacion .ring-lbl {
+            position: absolute; inset: 0;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            font-family: 'Outfit', sans-serif;
+        }
+        .card.liberacion .ring-lbl b { font-size: 22px; font-weight: 800; line-height: 1; }
+        .card.liberacion .ring-lbl small { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+        .card.liberacion .sub { justify-content: center; margin-top: 8px; }
+
+        .card.comp {
+            grid-column: span 2;
+            background: var(--header-grad); color: #fff;
+            border-left: 6px solid rgba(255, 255, 255, 0.4);
+        }
+        .card.comp .label { color: rgba(255, 255, 255, 0.8); }
+        .card.comp .mini-bars { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+        .card.comp .mini-bar-row { display: grid; grid-template-columns: 98px 1fr 44px; align-items: center; gap: 10px; font-size: 12.5px; font-weight: 600; }
+        .card.comp .bar-track { height: 12px; background: rgba(255, 255, 255, 0.18); border-radius: 30px; overflow: hidden; }
+        .card.comp .bar-fill { height: 100%; border-radius: 30px; width: 0; transition: width 1.2s cubic-bezier(0.65, 0, 0.35, 1); }
+        .card.comp .bar-fill.norte { background: linear-gradient(90deg, #38bdf8, #bde3ff); }
+        .card.comp .bar-fill.soga { background: linear-gradient(90deg, #7df0b0, #c9f7dd); }
+        .card.comp .mini-val { text-align: right; font-family: 'Outfit', sans-serif; font-size: 14px; }
+        .card.comp .comp-stats { display: flex; gap: 14px; margin-top: 12px; font-size: 12px; opacity: 0.85; flex-wrap: wrap; }
+        .card.comp .comp-stats span { display: inline-flex; align-items: center; gap: 5px; }
+        .cards .card:nth-child(1) { animation-delay: .05s; }
+        .cards .card:nth-child(2) { animation-delay: .12s; }
+        .cards .card:nth-child(3) { animation-delay: .19s; }
+        .cards .card:nth-child(4) { animation-delay: .26s; }
+        .cards .card:nth-child(5) { animation-delay: .33s; }
+        .cards .card:nth-child(6) { animation-delay: .40s; }
+
+        /* ========== 5. GRÁFICAS ========== */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 22px;
+        }
+        .chart-box {
+            background: var(--card);
+            border-radius: 22px;
+            padding: 18px 18px 12px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: transform 0.25s ease, box-shadow 0.3s;
+            animation: fadeUp 0.6s ease both;
+        }
+        .chart-box:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
+        .chart-box h3 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600; color: var(--text);
+            margin-bottom: 8px; font-size: 15px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .chart-box h3 i { color: var(--primary); font-size: 16px; }
+        .chart-box .chart-body { position: relative; height: 210px; }
+        .chart-box .chart-body canvas { width: 100% !important; height: 100% !important; }
+        .chart-box .click-hint { font-size: 11.5px; color: var(--muted); text-align: center; margin-top: 4px; }
+        .charts-grid .chart-box:nth-child(1) { animation-delay: .08s; }
+        .charts-grid .chart-box:nth-child(2) { animation-delay: .14s; }
+        .charts-grid .chart-box:nth-child(3) { animation-delay: .20s; }
+        .charts-grid .chart-box:nth-child(4) { animation-delay: .26s; }
+        .charts-grid .chart-box:nth-child(5) { animation-delay: .32s; }
+        .charts-grid .chart-box:nth-child(6) { animation-delay: .38s; }
+        .charts-grid .chart-box:nth-child(7) { animation-delay: .44s; }
+        .charts-grid .chart-box:nth-child(8) { animation-delay: .50s; }
+
+        /* ========== 6. FILTROS ========== */
+        .filters {
+            background: var(--card);
+            border-radius: 22px;
+            padding: 18px 22px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            animation: fadeUp 0.6s ease both;
+            animation-delay: .3s;
+        }
+        .filters-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 14px 18px; }
+        .filters label {
+            font-weight: 700; color: var(--text-soft);
+            font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.5px;
+            display: block; margin-bottom: 6px;
+        }
+        .filters label i { color: var(--primary); margin-right: 5px; }
+        .filters select,
+        .filters input {
+            padding: 9px 13px;
+            border-radius: 13px;
+            border: 1.5px solid var(--border);
+            font-family: 'Inter', sans-serif; font-size: 13.5px;
+            background: var(--input-bg);
+            color: var(--text);
+            min-width: 150px;
+            transition: border 0.2s, box-shadow 0.2s;
+        }
+        .filters select:focus, .filters input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(0, 114, 188, 0.15);
+        }
+        .filters .search-wrap { position: relative; }
+        .filters .search-wrap i {
+            position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
+            color: var(--muted); font-size: 13px;
+        }
+        .filters .search-wrap input { padding-left: 34px; min-width: 210px; }
+        .btn-limpiar {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: #fff; border: none; cursor: pointer;
+            padding: 10px 20px; border-radius: 13px;
+            font-weight: 700; font-size: 13px;
+            display: inline-flex; align-items: center; gap: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn-limpiar:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(239, 68, 68, 0.4); }
+        .badge-count {
+            margin-left: auto;
+            background: var(--primary-soft);
+            color: var(--primary);
+            padding: 9px 18px; border-radius: 40px;
+            font-size: 13px; font-weight: 700; white-space: nowrap;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+        .chip {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: var(--chip-bg); color: var(--chip-text);
+            font-size: 12px; font-weight: 700;
+            padding: 6px 8px 6px 13px; border-radius: 40px;
+            animation: fadeUp 0.3s ease;
+        }
+        .chip button {
+            border: none; background: rgba(0, 0, 0, 0.12);
+            color: inherit; width: 18px; height: 18px; border-radius: 50%;
+            font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: background 0.2s;
+        }
+        .chip button:hover { background: rgba(0, 0, 0, 0.25); }
+
+        /* ========== 7. TABLA ========== */
+        .table-wrapper {
+            background: var(--card);
+            border-radius: 22px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            animation: fadeUp 0.6s ease both;
+            animation-delay: .36s;
+        }
+        .table-scroll { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+        th {
+            background: var(--table-head);
+            color: var(--text-soft);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            padding: 14px 14px;
+            text-align: left;
+            border-bottom: 2px solid var(--border);
+            white-space: nowrap;
+            position: sticky; top: 0; z-index: 2;
+            cursor: pointer;
+            user-select: none;
+            transition: color 0.2s;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+        th:hover { color: var(--primary); }
+        th .sort-icon { font-size: 10px; margin-left: 5px; opacity: 0.5; }
+        th.active .sort-icon { opacity: 1; color: var(--primary); }
+        td { padding: 12px 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+        tbody tr { cursor: pointer; transition: background 0.15s; }
+        tbody tr:hover td { background: var(--row-hover); }
+        tbody tr:nth-child(even) td { background: rgba(0, 0, 0, 0.012); }
+        tbody tr:nth-child(even):hover td { background: var(--row-hover); }
+        mark { background: var(--mark-bg); color: inherit; border-radius: 3px; padding: 0 2px; font-weight: 800; }
+
+        .estado-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 3px 12px; border-radius: 40px;
+            font-size: 11.5px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.3px;
+        }
+        .estado-badge.rojo { background: rgba(239, 68, 68, 0.14); color: #dc2626; }
+        .estado-badge.amarillo { background: rgba(241, 196, 15, 0.18); color: #a16207; }
+        .estado-badge.verde { background: rgba(34, 197, 94, 0.15); color: #15803d; }
+        .estado-badge.gris { background: rgba(100, 116, 139, 0.15); color: #475569; }
+        .semafo {
+            display: inline-block; width: 11px; height: 11px; border-radius: 50%; margin-right: 2px;
+            vertical-align: middle;
+        }
+        .semafo.rojo { background: #ef4444; box-shadow: 0 0 8px rgba(239, 68, 68, 0.6); }
+        .semafo.amarillo { background: #f1c40f; box-shadow: 0 0 8px rgba(241, 196, 15, 0.6); }
+        .semafo.verde { background: #22c55e; box-shadow: 0 0 8px rgba(34, 197, 94, 0.6); }
+        .proye-tag { font-weight: 800; }
+        .proye-tag.norte { color: #0072bc; }
+        .proye-tag.soga { color: #00a651; }
+
+        .empty-row td { text-align: center; padding: 46px 0; color: var(--muted); font-style: italic; font-size: 14px; }
+        .empty-row i { font-size: 34px; display: block; margin-bottom: 10px; opacity: 0.4; }
+
+        .table-footer {
+            display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px;
+            padding: 14px 20px;
+            border-top: 1px solid var(--border);
+            font-size: 13px; color: var(--text-soft);
+        }
+        .pagination { display: flex; align-items: center; gap: 8px; }
+        .page-btn {
+            border: 1.5px solid var(--border); background: var(--card); color: var(--text);
+            width: 34px; height: 34px; border-radius: 11px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; font-size: 13px;
+            transition: all 0.2s;
+        }
+        .page-btn:hover:not(:disabled) { border-color: var(--primary); color: var(--primary); transform: translateY(-2px); }
+        .page-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+        .page-info { font-weight: 700; min-width: 90px; text-align: center; font-family: 'Outfit', sans-serif; }
+
+        /* ========== 8. MODAL / ALERTAS / TOAST ========== */
+        .modal-overlay {
+            position: fixed; inset: 0; background: var(--modal-bg);
+            backdrop-filter: blur(6px);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 100; opacity: 0; visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+        .modal-overlay.open { opacity: 1; visibility: visible; }
+        .modal {
+            background: var(--card);
+            width: min(560px, 92vw);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 40px 90px rgba(0, 0, 0, 0.4);
+            transform: translateY(30px) scale(0.96);
+            transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+            border: 1px solid var(--border);
+            max-height: 88vh; overflow-y: auto;
+            position: relative;
+        }
+        .modal-overlay.open .modal { transform: translateY(0) scale(1); }
+        .modal h2 { font-family: 'Outfit', sans-serif; font-size: 22px; margin-bottom: 4px; display: flex; align-items: center; gap: 10px; }
+        .modal .modal-sub { color: var(--text-soft); font-size: 13px; margin-bottom: 20px; }
+        .modal-close {
+            position: absolute; top: 18px; right: 18px;
+            border: none; background: var(--primary-soft); color: var(--primary);
+            width: 36px; height: 36px; border-radius: 12px; cursor: pointer; font-size: 15px;
+            transition: transform 0.2s;
+        }
+        .modal-close:hover { transform: rotate(90deg); }
+        .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .detail-item {
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 14px; padding: 12px 14px;
+        }
+        .detail-item .d-label { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); font-weight: 700; margin-bottom: 4px; }
+        .detail-item .d-value { font-size: 14.5px; font-weight: 700; word-break: break-word; }
+
+        .alerts-toggle {
+            position: fixed; right: 22px; bottom: 22px; z-index: 90;
+            width: 54px; height: 54px; border-radius: 18px; border: none;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: #fff; font-size: 20px; cursor: pointer;
+            box-shadow: 0 14px 30px rgba(239, 68, 68, 0.45);
+            transition: transform 0.25s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .alerts-toggle:hover { transform: translateY(-4px) rotate(-6deg); }
+        .alerts-toggle .badge-btn {
+            position: absolute; top: -6px; right: -6px;
+            background: #0f172a; color: #fff; font-size: 11px; font-weight: 800;
+            min-width: 22px; height: 22px; border-radius: 30px;
+            display: flex; align-items: center; justify-content: center; padding: 0 5px;
+            box-shadow: 0 0 0 3px var(--bg);
+        }
+        .alerts-panel {
+            position: fixed; right: 22px; bottom: 88px; z-index: 90;
+            width: min(380px, 92vw);
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            box-shadow: var(--shadow-hover);
+            padding: 18px;
+            opacity: 0; visibility: hidden; transform: translateY(16px) scale(0.97);
+            transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+            max-height: 62vh; overflow-y: auto;
+        }
+        .alerts-panel.open { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+        .alerts-panel h3 { font-family: 'Outfit', sans-serif; font-size: 16px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+        .alerts-panel .alerts-sub { font-size: 12px; color: var(--text-soft); margin-bottom: 14px; }
+        .alert-item {
+            display: flex; gap: 12px; align-items: flex-start;
+            padding: 12px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            margin-bottom: 8px;
+            background: var(--input-bg);
+            transition: transform 0.2s;
+        }
+        .alert-item:hover { transform: translateX(4px); }
+        .alert-item .a-ico { width: 36px; height: 36px; border-radius: 11px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+        .alert-item.rojo .a-ico { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+        .alert-item.amarillo .a-ico { background: rgba(241, 196, 15, 0.18); color: #ca8a04; }
+        .alert-item .a-text b { font-size: 13px; display: block; }
+        .alert-item .a-text span { font-size: 11.5px; color: var(--text-soft); }
+
+        .toast {
+            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+            background: #0f172a; color: #fff; padding: 12px 22px; border-radius: 40px;
+            font-size: 13.5px; font-weight: 700; z-index: 200;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+            opacity: 0; transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+            display: flex; align-items: center; gap: 10px;
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .toast.success i { color: #22c55e; }
+        .toast.info i { color: #38bdf8; }
+
+        /* ========== 9. FOOTER ========== */
+        .footer {
+            text-align: center; margin-top: 26px;
+            color: var(--text-soft); font-size: 12.5px;
+            border-top: 1px solid var(--border); padding-top: 18px;
+            display: flex; justify-content: center; align-items: center; gap: 16px; flex-wrap: wrap;
+        }
+        .footer .sep { opacity: 0.4; }
+
+        /* ========== 10. IMPRESIÓN ========== */
+        @media print {
+            body { background: #fff !important; padding: 0; }
+            .header, .btn, .charts-grid, .filters, .alerts-toggle, .alerts-panel, .bg-blob, .card.comp, .toast, .modal-overlay { display: none !important; }
+            .table-wrapper { box-shadow: none; border-radius: 0; }
+            th { background: #e5e7eb !important; }
+        }
+
+        /* ========== 11. RESPONSIVE ========== */
+        @media (max-width: 1280px) {
+            .charts-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 900px) {
+            .header { flex-direction: column; align-items: flex-start; }
+            .header-right { align-items: flex-start; }
+            .filters-row { flex-direction: column; align-items: stretch; }
+            .badge-count { margin-left: 0; justify-content: center; }
+            .cards { grid-template-columns: repeat(2, 1fr); }
+            .card.comp { grid-column: span 2; }
+            .detail-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 520px) {
+            body { padding: 14px 10px 30px; }
+            .cards { grid-template-columns: 1fr; }
+            .card.comp { grid-column: span 1; }
+            .charts-grid { grid-template-columns: 1fr; }
+            .header h1 { font-size: 20px; }
+            .clock-box { min-width: 130px; }
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <div class="bg-blob bg-blob-1"></div>
+    <div class="bg-blob bg-blob-2"></div>
+    <div class="bg-blob bg-blob-3"></div>
+
+    <div class="container">
+
+        <!-- ========== HEADER ========== -->
+        <header class="header">
+            <div class="header-left">
+                <div class="logo"><i class="fas fa-bolt"></i></div>
+                <div>
+                    <h1>GEB <span class="energis">Dashboard</span></h1>
+                    <div class="subtitle">
+                        <i class="fas fa-map-marked-alt"></i> Control de liberación de predios — NORTE · SOGAMOSO
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="clock-box">
+                    <div id="relojTiempo">--:--:--</div>
+                    <div id="relojFecha">Cargando…</div>
+                </div>
+                <div class="header-actions">
+                    <button class="btn" id="btnExportarCSV" title="Exportar a CSV"><i class="fas fa-file-csv"></i> CSV</button>
+                    <button class="btn" id="btnImprimir" title="Generar reporte PDF / Imprimir"><i class="fas fa-print"></i> Reporte</button>
+                    <button class="btn" id="btnAlerts" title="Ver alertas críticas"><i class="fas fa-bell"></i> Alertas <span class="badge-btn" id="alertCount">0</span></button>
+                    <button class="btn tema" id="btnTema" title="Alternar tema"><i class="fas fa-moon" id="temaIcon"></i></button>
+                </div>
+            </div>
+        </header>
+
+        <!-- ========== TARJETAS KPI ========== -->
+        <section class="cards" id="cardsResumen">
+            <div class="card total">
+                <div class="card-top">
+                    <div class="label">Total predios</div>
+                    <div class="icon"><i class="fas fa-layer-group"></i></div>
+                </div>
+                <div class="value" id="totalCard">0</div>
+                <div class="sub"><span class="dot" style="background:var(--primary)"></span> registros en base</div>
+            </div>
+            <div class="card rojo">
+                <div class="card-top">
+                    <div class="label">🔴 Crítico</div>
+                    <div class="icon"><i class="fas fa-exclamation-triangle"></i></div>
+                </div>
+                <div class="value" id="rojoCard">0</div>
+                <div class="sub"><span class="dot" style="background:#ef4444"></span> no liberado / amparo</div>
+            </div>
+            <div class="card amarillo">
+                <div class="card-top">
+                    <div class="label">🟡 Alerta</div>
+                    <div class="icon"><i class="fas fa-clock"></i></div>
+                </div>
+                <div class="value" id="amarilloCard">0</div>
+                <div class="sub"><span class="dot" style="background:#f1c40f"></span> en trámite</div>
+            </div>
+            <div class="card verde">
+                <div class="card-top">
+                    <div class="label">🟢 Liberado</div>
+                    <div class="icon"><i class="fas fa-check-double"></i></div>
+                </div>
+                <div class="value" id="verdeCard">0</div>
+                <div class="sub"><span class="dot" style="background:#22c55e"></span> listo / gestionado</div>
+            </div>
+            <div class="card liberacion">
+                <div class="card-top">
+                    <div class="label">% Liberación</div>
+                </div>
+                <div class="ring-wrap" id="ringLiberacion"></div>
+                <div class="sub"><i class="fas fa-arrow-trend-up"></i> avance global</div>
+            </div>
+            <div class="card comp">
+                <div class="card-top">
+                    <div class="label"><i class="fas fa-project-diagram"></i> NORTE vs SOGAMOSO</div>
+                </div>
+                <div class="mini-bars">
+                    <div class="mini-bar-row">
+                        <span><i class="fas fa-bolt" style="font-size:11px"></i> NORTE</span>
+                        <div class="bar-track"><div class="bar-fill norte" id="barNorte"></div></div>
+                        <span class="mini-val" id="valNorte">0</span>
+                    </div>
+                    <div class="mini-bar-row">
+                        <span><i class="fas fa-bolt" style="font-size:11px"></i> SOGAMOSO</span>
+                        <div class="bar-track"><div class="bar-fill soga" id="barSoga"></div></div>
+                        <span class="mini-val" id="valSoga">0</span>
+                    </div>
+                </div>
+                <div class="comp-stats" id="compStats"></div>
+            </div>
+        </section>
+
+        <!-- ========== GRÁFICAS FILA 1 ========== -->
+        <section class="charts-grid">
+            <div class="chart-box">
+                <h3><i class="fas fa-traffic-light"></i> Semáforo · General</h3>
+                <div class="chart-body"><canvas id="chartSemaforo"></canvas></div>
+                <div class="click-hint"><i class="fas fa-mouse-pointer"></i> Clic en el gráfico para filtrar</div>
+            </div>
+            <div class="chart-box">
+                <h3><i class="fas fa-list-ul"></i> Estado Concreto</h3>
+                <div class="chart-body"><canvas id="chartEstado"></canvas></div>
+                <div class="click-hint"><i class="fas fa-mouse-pointer"></i> Clic en una barra para filtrar</div>
+            </div>
+            <div class="chart-box">
+                <h3><i class="fas fa-columns"></i> NORTE vs SOGAMOSO</h3>
+                <div class="chart-body"><canvas id="chartComparativa"></canvas></div>
+            </div>
+            <div class="chart-box">
+                <h3><i class="fas fa-city"></i> Top 8 Municipios</h3>
+                <div class="chart-body"><canvas id="chartMunicipios"></canvas></div>
+            </div>
+        </section>
+
+        <!-- ========== GRÁFICAS FILA 2 ========== -->
+        <section class="charts-grid">
+            <div class="chart-box">
+                <h3><i class="fas fa-tower-broadcast"></i> Torres por tipo</h3>
+                <div class="chart-body"><canvas id="chartTorres"></canvas></div>
+            </div>
+            <div class="chart-box">
+                <h3><i class="fas fa-gauge-high"></i> Indicador de Liberación</h3>
+                <div class="chart-body"><canvas id="chartGauge"></canvas></div>
+            </div>
+            <div class="chart-box">
+                <h3><i class="fas fa-chart-line"></i> Tendencia · Últimos 7 días</h3>
+                <div class="chart-body"><canvas id="chartTendencia"></canvas></div>
+            </div>
+            <div class="chart-box">
+                <h3><i class="fas fa-map-marked-alt"></i> Predios por departamento</h3>
+                <div class="chart-body"><canvas id="chartDeptos"></canvas></div>
+            </div>
+        </section>
+
+        <!-- ========== FILTROS ========== -->
+        <section class="filters">
+            <div class="filters-row">
+                <div>
+                    <label for="filtroProyecto"><i class="fas fa-tag"></i> Proyecto</label>
+                    <select id="filtroProyecto">
+                        <option value="todos">Todos</option>
+                        <option value="NORTE">NORTE</option>
+                        <option value="SOGAMOSO">SOGAMOSO</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="filtroSemaforo"><i class="fas fa-traffic-light"></i> Semáforo</label>
+                    <select id="filtroSemaforo">
+                        <option value="todos">Todos</option>
+                        <option value="rojo">🔴 Rojo</option>
+                        <option value="amarillo">🟡 Amarillo</option>
+                        <option value="verde">🟢 Verde</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="filtroEstado"><i class="fas fa-list-ul"></i> Estado Concreto</label>
+                    <select id="filtroEstado">
+                        <option value="todos">Todos</option>
+                    </select>
+                </div>
+                <div class="search-wrap">
+                    <label for="filtroBusqueda"><i class="fas fa-search"></i> Buscar</label>
+                    <input type="text" id="filtroBusqueda" placeholder="Municipio, ID, torre..." />
+                </div>
+                <button class="btn-limpiar" id="btnLimpiar"><i class="fas fa-undo-alt"></i> Limpiar</button>
+                <div class="badge-count">
+                    <i class="fas fa-list"></i> Mostrando <span id="filaMostradas">0</span> registros
+                </div>
+            </div>
+            <div class="chips" id="chipsActivos"></div>
+        </section>
+
+        <!-- ========== TABLA ========== -->
+        <div class="table-wrapper">
+            <div class="table-scroll">
+                <table>
+                    <thead id="tablaHead">
+                        <tr>
+                            <th data-sort="proyecto">Proyecto <span class="sort-icon fas fa-sort"></span></th>
+                            <th data-sort="departamento">Departamento <span class="sort-icon fas fa-sort"></span></th>
+                            <th data-sort="municipio">Municipio <span class="sort-icon fas fa-sort"></span></th>
+                            <th data-sort="idPredio">ID Predio <span class="sort-icon fas fa-sort"></span></th>
+                            <th data-sort="torres">Torres <span class="sort-icon fas fa-sort"></span></th>
+                            <th data-sort="estadoConcreto">Estado Concreto <span class="sort-icon fas fa-sort"></span></th>
+                            <th data-sort="semaforo">Semáforo <span class="sort-icon fas fa-sort"></span></th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaBody"></tbody>
+                </table>
+            </div>
+            <div class="table-footer">
+                <span id="filaInfo">0 registros</span>
+                <div class="pagination">
+                    <button class="page-btn" id="pagePrev" title="Anterior"><i class="fas fa-chevron-left"></i></button>
+                    <span class="page-info" id="pageInfo">1 / 1</span>
+                    <button class="page-btn" id="pageNext" title="Siguiente"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <span><i class="fas fa-bolt" style="color:#f1c40f;"></i> GEB Dashboard</span>
+            <span class="sep">·</span>
+            <span>Proyectos NORTE y SOGAMOSO</span>
+            <span class="sep">·</span>
+            <span>Última actualización: <span id="fechaActualizacion">—</span></span>
+        </footer>
+    </div>
+
+    <!-- ========== BOTÓN + PANEL DE ALERTAS ========== -->
+    <button class="alerts-toggle" id="alertsToggle" title="Alertas críticas">
+        <i class="fas fa-bell"></i>
+        <span class="badge-btn" id="alertsBadge">0</span>
+    </button>
+    <div class="alerts-panel" id="alertsPanel">
+        <h3><i class="fas fa-exclamation-triangle" style="color:#ef4444;"></i> Alertas críticas</h3>
+        <div class="alerts-sub">Predios con prioridad alta que requieren gestión</div>
+        <div id="alertsList"></div>
+    </div>
+
+    <!-- ========== MODAL DETALLE ========== -->
+    <div class="modal-overlay" id="modalDetalle">
+        <div class="modal">
+            <button class="modal-close" id="modalClose"><i class="fas fa-times"></i></button>
+            <h2><i class="fas fa-map-marker-alt" style="color:var(--primary);"></i> Detalle del predio</h2>
+            <div class="modal-sub" id="modalSub">Información completa del registro</div>
+            <div class="detail-grid" id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- ========== TOAST ========== -->
+    <div class="toast" id="toast"><i class="fas fa-info-circle"></i> <span id="toastMsg"></span></div>
+
+    <script>
+        "use strict";
+        /* ================================================================
+           1. DATOS ORIGINALES (sin modificar)
+        ================================================================ */
+        const datosRaw = [
+            ["NORTE", "CUNDINAMARCA", "CHOCONTA", "10-10-0676", "140NN*", "NO LIBERADO", 1],
+            ["NORTE", "CUNDINAMARCA", "CHOCONTA", "10-10-0685-V", "141A", "NO LIBERADO", 3],
+            ["NORTE", "CUNDINAMARCA", "COGUA", "10-15-0799-N2", "17NN", "amparo en trámite", 1],
+            ["NORTE", "CUNDINAMARCA", "COGUA", "10-15-0804", "20NA", "amparo en trámite", 1],
+            ["NORTE", "CUNDINAMARCA", "COGUA", "10-15-0805-V", "20AV", "amparo en trámite", 1],
+            ["NORTE", "CUNDINAMARCA", "COGUA", "10-15-0814-V", "22N", "NO LIBERADO", 1],
+            ["NORTE", "CUNDINAMARCA", "NEMOCON", "10-14-1223", "VANO", "NO LIBERADO", 1],
+            ["NORTE", "CUNDINAMARCA", "NEMOCON", "10-14-1223", "8NNA", "NO LIBERADO", 3],
+            ["NORTE", "CUNDINAMARCA", "NEMOCON", "10-14-1232", "VANO", "NO LIBERADO", 2],
+            ["NORTE", "CUNDINAMARCA", "NEMOCON", "10-14-1235", "VANO", "NO LIBERADO", 2],
+            ["NORTE", "CUNDINAMARCA", "NEMOCON", "10-14-1243", "10NN", "NO LIBERADO", 1],
+            ["NORTE", "CUNDINAMARCA", "NEMOCON", "10-14-1244", "10NA", "NO LIBERADO", 1],
+            ["NORTE", "CUNDINAMARCA", "NEMOCON", "10-14-1251", "10NB", "NO LIBERADO", 1],
+            ["NORTE", "CUNDINAMARCA", "SUBACHOQUE", "10-18-0998", "VANO", "NO LIBERADO", 3],
+            ["NORTE", "CUNDINAMARCA", "SUBACHOQUE", "10-18-0999 / 10-18-0999-A", "90", "amparo en trámite", 1],
+            ["NORTE", "CUNDINAMARCA", "SUESCA", "10-11-0717-N1", "VANO", "NO LIBERADO", 2],
+            ["NORTE", "CUNDINAMARCA", "SUESCA", "10-11-1202", "VANO", "NO LIBERADO", 2],
+            ["NORTE", "CUNDINAMARCA", "SUESCA", "10-11-1207", "6NB, 6NA", "DEMANDA RETIRADA", 2],
+            ["NORTE", "CUNDINAMARCA", "TABIO", "10-17-0961", "VANO", "NO LIBERADO", 2],
+            ["NORTE", "CUNDINAMARCA", "TIBIRITA", "10-08-1123", "VANO", "NO LIBERADO", 2],
+            ["NORTE", "CUNDINAMARCA", "ZIPAQUIRA", "10-16-0856", "VANO", "NO LIBERADO", 2],
+            ["NORTE", "CUNDINAMARCA", "ZIPAQUIRA", "10-16-0903", "VANO", "NO LIBERADO", 2],
+            ["NORTE", "CUNDINAMARCA", "ZIPAQUIRA", "10-16-1141", "VANO", "NO LIBERADO", 3],
+            ["NORTE", "CUNDINAMARCA", "ZIPAQUIRA", "10-16-1148", "64NV", "NO LIBERADO", 1],
+            ["NORTE", "BOYACÁ", "GARAGOA", "10-04-0211-V", "VANO", "NO LIBERADO", 2],
+            ["NORTE", "CUNDINAMARCA", "CHOCONTA", "10-10-0671", "139, 138", "LIBERADO", 3],
+            ["NORTE", "CUNDINAMARCA", "COGUA", "10-15-0799-N2", "17NN", "LIBERADO", 3],
+            ["NORTE", "CUNDINAMARCA", "COGUA", "10-15-0808-V", "21NV", "LIBERADO", 3],
+            ["NORTE", "CUNDINAMARCA", "COGUA", "10-15-0810-V", "VANO", "LIBERADO", 3],
+            ["NORTE", "CUNDINAMARCA", "COGUA", "10-15-0813", "23AN", "LIBERADO", 3],
+            ["NORTE", "CUNDINAMARCA", "MADRID", "10-19-1052-D5", "VANO", "LIBERADO", 3],
+            ["NORTE", "CUNDINAMARCA", "NEMOCON", "10-14-1234", "VANO", "LIBERADO", 3],
+            ["NORTE", "CUNDINAMARCA", "NEMOCON", "10-14-1241-1", "VANO", "LIBERADO", 3],
+            ["NORTE", "CUNDINAMARCA", "NEMOCON", "10-14-1241-2", "VANO", "LIBERADO", 3],
+            ["NORTE", "CUNDINAMARCA", "NEMOCON", "10-14-1255", "VANO", "LIBERADO", 3],
+            ["NORTE", "CUNDINAMARCA", "NEMOCON", "10-14-1263", "12NE", "LIBERADO", 3],
+            ["NORTE", "CUNDINAMARCA", "NEMOCON", "10-14-1301", "VANO", "LIBERADO", 3],
+            ["NORTE", "CUNDINAMARCA", "SUBACHOQUE", "10-18-1003", "VANO", "LIBERADO", 3],
+            ["NORTE", "CUNDINAMARCA", "SUBACHOQUE", "10-18-1022", "VANO", "LIBERADO", 3],
+            ["NORTE", "CUNDINAMARCA", "SUBACHOQUE", "10-18-1031", "107", "LIBERADO", 3],
+            ["NORTE", "CUNDINAMARCA", "SUESCA", "10-11-1198", "VANO", "LIBERADO", 2],
+            ["NORTE", "CUNDINAMARCA", "ZIPAQUIRA", "10-16-0851-V", "36NV", "LIBERADO", 3],
+            ["NORTE", "CUNDINAMARCA", "ZIPAQUIRA", "10-16-0852-V", "VANO", "LIBERADO", 3],
+            ["NORTE", "CUNDINAMARCA", "ZIPAQUIRA", "10-16-0881-V", "44ANN", "LIBERADO", 3],
+            ["NORTE", "CUNDINAMARCA", "ZIPAQUIRA", "10-16-0912", "VANO", "LIBERADO", 3],
+            ["NORTE", "CUNDINAMARCA", "ZIPAQUIRA", "10-16-1142", "VANO", "LIBERADO", 3],
+            ["SOGAMOSO", "SANTANDER", "EL CARMEN DE CHUCURÍ", "12-03-0150", "0142N", "NO LIBERADO", 1],
+            ["SOGAMOSO", "SANTANDER", "CHUCURRI", "12-03-0113", "0123N", "NO LIBERADO", 1],
+            ["SOGAMOSO", "CUNDINAMARCA", "COGUA", "12-24-1398-01 / 12-24-1400", "0067  y 0062N", "amparo en trámite", 1],
+            ["SOGAMOSO", "CUNDINAMARCA", "LA VEGA", "12-29-1601-01", "VANO", "NO LIBERADO", 1],
+            ["SOGAMOSO", "CUNDINAMARCA", "NEMOCÓN", "12-22-1157", "0525N", "NO LIBERADO", 1],
+            ["SOGAMOSO", "CUNDINAMARCA", "PACHO", "12-26-1495", "0107NN", "NO LIBERADO", 1],
+            ["SOGAMOSO", "CUNDINAMARCA", "PACHO", "12-26-1447", "VANO", "NO LIBERADO", 2],
+            ["SOGAMOSO", "CUNDINAMARCA", "SAN VICENTE DE CHUCURÍ", "12-03-0079-V", "0100N", "NO LIBERADO", 1],
+            ["SOGAMOSO", "SANTANDER", "VELEZ", "12-06-0212", "torre", "LIBERADO", 1],
+            ["SOGAMOSO", "SANTANDER", "VELEZ", "12-06-0211", "189", "amparo en trámite", 1],
+            ["SOGAMOSO", "BOYACÁ", "CALDAS", "12-16-0699", "", "", 2],
+            ["SOGAMOSO", "CUNDINAMARCA", "CARMEN DE CARUPA", "12-18-0959", "VANO", "EN TRÁMITE", 2],
+            ["SOGAMOSO", "CUNDINAMARCA", "COGUA", "12-24-1375", "VANO", "EN TRÁMITE", 2],
+            ["SOGAMOSO", "CUNDINAMARCA", "LA MESA", "12-36-1807", "VANO", "EN TRÁMITE", 2],
+            ["SOGAMOSO", "CUNDINAMARCA", "LA MESA", "12-36-1810", "VANO", "EN TRÁMITE", 2],
+            ["SOGAMOSO", "CUNDINAMARCA", "LA VEGA", "12-29-1593", "VANO", "EN TRÁMITE", 2],
+            ["SOGAMOSO", "CUNDINAMARCA", "LA VEGA", "12-29-1614", "VANO", "EN TRÁMITE", 2],
+            ["SOGAMOSO", "CUNDINAMARCA", "NEMOCÓN", "12-22-1148-01", "VANO", "EN TRÁMITE", 2],
+            ["SOGAMOSO", "CUNDINAMARCA", "NEMOCÓN", "12-22-1169", "VANO", "EN TRÁMITE", 2],
+            ["SOGAMOSO", "CUNDINAMARCA", "NEMOCÓN", "12-22-1176", "VANO", "EN TRÁMITE", 2],
+            ["SOGAMOSO", "CUNDINAMARCA", "NEMOCON", "12-22-1151", "VANO", "NO LIBERADO", 2],
+            ["SOGAMOSO", "CUNDINAMARCA", "NEMOCON", "12-22-1190", "VANO", "NO LIBERADO", 2],
+            ["SOGAMOSO", "CUNDINAMARCA", "NEMOCON", "12-22-1194-01", "VANO", "NO LIBERADO", 2],
+            ["SOGAMOSO", "CUNDINAMARCA", "NEMOCON", "12-22-1265-03", "VANO", "NO LIBERADO", 2],
+            ["SOGAMOSO", "CUNDINAMARCA", "NEMOCON", "12-22-1270-02", "VANO", "NO LIBERADO", 2],
+            ["SOGAMOSO", "CUNDINAMARCA", "SAN ANTONIO DEL TEQUENDAMA", "12-38-1964", "VANO", "EN TRÁMITE", 2],
+            ["SOGAMOSO", "CUNDINAMARCA", "SOACHA", "12-39-2027", "VANO", "EN TRÁMITE", 2],
+            ["SOGAMOSO", "CUNDINAMARCA", "SUESCA", "12-25-1223", "VANO", "NO LIBERADO", 2],
+            ["SOGAMOSO", "CUNDINAMARCA", "SUESCA", "12-25-1225", "VANO", "NO LIBERADO", 2],
+            ["SOGAMOSO", "CUNDINAMARCA", "SUESCA", "12-25-1230", "VANO", "NO LIBERADO", 2],
+            ["SOGAMOSO", "CUNDINAMARCA", "SUESCA", "12-25-1231", "VANO", "NO LIBERADO", 2],
+            ["SOGAMOSO", "CUNDINAMARCA", "TAUSA", "12-21-1282-01", "VANO", "NO LIBERADO", 2],
+            ["SOGAMOSO", "SANTANDER", "CARMEN DE CHUCURRI", "12-03-0111-V", "VANO", "NO LIBERADO", 2],
+            ["SOGAMOSO", "SANTANDER", "EL CARMEN DE CHUCURÍ", "12-03-0081-V", "0", "EN TRÁMITE", 2],
+            ["SOGAMOSO", "BOYACÁ", "BRICEÑO", "12-15-0660", "VANO", "LIBERADO", 3],
+            ["SOGAMOSO", "BOYACÁ", "SABOYÁ", "12-13-0606", "VANO", "LIBERADO", 3],
+            ["SOGAMOSO", "CUNDINAMARCA", "ALBÁN", "12-31-1667", "VANO", "LIBERADO", 3],
+            ["SOGAMOSO", "CUNDINAMARCA", "COGUA", "12-24-1319-01", "VANO", "LIBERADO", 3],
+            ["SOGAMOSO", "CUNDINAMARCA", "NEMOCÓN", "12-22-1145", "VANO", "LIBERADO", 3],
+            ["SOGAMOSO", "CUNDINAMARCA", "NEMOCÓN", "12-22-1149", "VANO", "LIBERADO", 3],
+            ["SOGAMOSO", "CUNDINAMARCA", "NEMOCÓN", "12-22-1154", "VANO", "LIBERADO", 3],
+            ["SOGAMOSO", "CUNDINAMARCA", "NEMOCÓN", "12-22-1185", "0020N, 0538N", "LIBERADO", 3],
+            ["SOGAMOSO", "CUNDINAMARCA", "SOACHA", "12-39-2028", "VANO", "LIBERADO", 3],
+            ["SOGAMOSO", "CUNDINAMARCA", "TAUSA", "12-21-1275-01", "0033CN", "LIBERADO", 3],
+            ["SOGAMOSO", "CUNDINAMARCA", "TENA", "12-37-1860", "VANO", "LIBERADO", 3],
+            ["SOGAMOSO", "CUNDINAMARCA", "TENA", "12-37-1892", "VANO", "LIBERADO", 3],
+            ["SOGAMOSO", "SANTANDER", "ALBANIA", "12-12-0573", "VANO", "LIBERADO", 3],
+            ["SOGAMOSO", "SANTANDER", "ALBANIA", "12-12-0599", "VANO", "LIBERADO", 3],
+            ["SOGAMOSO", "SANTANDER", "BETULIA", "12-01-0001-V", "0005N", "LIBERADO", 3],
+            ["SOGAMOSO", "SANTANDER", "EL CARMEN DE CHUCURÍ", "12-03-0080", "0", "LIBERADO", 3],
+            ["SOGAMOSO", "SANTANDER", "EL CARMEN DE CHUCURÍ", "12-03-0144", "139", "LIBERADO", 3],
+            ["SOGAMOSO", "SANTANDER", "SAN VICENTE DE CHUCURÍ", "12-02-0046-V", "0", "LIBERADO", 3],
+            ["SOGAMOSO", "SANTANDER", "SUCRE", "12-10-0468", "VANO", "LIBERADO", 3],
+            ["SOGAMOSO", "SANTANDER", "VELEZ", "12-06-0211", "189", "LIBERADO", 3]
+        ];
+
+        /* ================================================================
+           2. PROCESAR DATOS
+        ================================================================ */
+        function determinarSemaforo(control, estadoConcreto) {
+            const e = (estadoConcreto || '').toUpperCase().trim();
+            if (e.includes('AMPARO') || e.includes('DEMANDA RETIRADA') || e.includes('NO LIBERADO')) {
+                return 'rojo';
+            }
+            if (control === 1) return 'rojo';
+            if (control === 2) return 'amarillo';
+            if (control === 3) return 'verde';
+            if (e === 'LIBERADO') return 'verde';
+            if (e === 'EN TRÁMITE') return 'amarillo';
+            return 'rojo';
+        }
+
+        function limpiarEstado(estado) {
+            if (!estado) return '';
+            const e = estado.trim();
+            if (e.toUpperCase() === 'DEMANDA RETIRADA') return 'Retirada';
+            if (e.toLowerCase() === 'amparo en trámite') return 'Amparo';
+            return e;
+        }
+
+        const proyectos = datosRaw.map(row => {
+            const estadoOriginal = row[5] || '';
+            const estadoLimpio = limpiarEstado(estadoOriginal);
+            return {
+                proyecto: row[0],
+                departamento: row[1],
+                municipio: row[2],
+                idPredio: row[3],
+                torres: row[4] || '',
+                estadoConcreto: estadoLimpio,
+                estadoOriginal: estadoOriginal,
+                control: parseInt(row[6]) || 0,
+                semaforo: determinarSemaforo(parseInt(row[6]) || 0, estadoOriginal)
+            };
+        });
+
+        /* ================================================================
+           3. UTILIDADES VISUALES
+        ================================================================ */
+        function esc(s) {
+            return String(s == null ? '' : s)
+                .replace(/&/g, '&amp;').replace(/</g, '<').replace(/>/g, '>')
+                .replace(/"/g, '"').replace(/'/g, '&#39;');
+        }
+
+        function animateCounter(element, target, duration = 900) {
+            const startTime = performance.now();
+            const from = 0;
+            function update(now) {
+                const p = Math.min((now - startTime) / duration, 1);
+                const eased = 1 - Math.pow(1 - p, 3);
+                element.textContent = Math.floor(eased * (target - from) + from);
+                if (p < 1) requestAnimationFrame(update);
+                else element.textContent = target;
+            }
+            requestAnimationFrame(update);
+        }
+
+        function semaforoLabel(s) {
+            return s.charAt(0).toUpperCase() + s.slice(1);
+        }
+
+        function semaforoIcon(s) {
+            if (s === 'rojo') return '🔴';
+            if (s === 'amarillo') return '🟡';
+            return '🟢';
+        }
+
+        /* ================================================================
+           4. TARJETAS KPI + ANILLO + COMPARATIVA
+        ================================================================ */
+        function renderKpis() {
+            const total = proyectos.length;
+            const rojos = proyectos.filter(p => p.semaforo === 'rojo').length;
+            const amarillos = proyectos.filter(p => p.semaforo === 'amarillo').length;
+            const verdes = proyectos.filter(p => p.semaforo === 'verde').length;
+            animateCounter(document.getElementById('totalCard'), total);
+            animateCounter(document.getElementById('rojoCard'), rojos);
+            animateCounter(document.getElementById('amarilloCard'), amarillos);
+            animateCounter(document.getElementById('verdeCard'), verdes);
+
+            // Anillo de liberación
+            const pct = total ? Math.round((verdes / total) * 100) : 0;
+            const ring = document.getElementById('ringLiberacion');
+            const r = 36;
+            const circ = 2 * Math.PI * r;
+            const color = pct >= 60 ? '#22c55e' : pct >= 30 ? '#f1c40f' : '#ef4444';
+            ring.innerHTML = `
+                <svg viewBox="0 0 80 80">
+                    <circle class="ring-bg" cx="40" cy="40" r="${r}"></circle>
+                    <circle class="ring-fg" cx="40" cy="40" r="${r}" stroke="${color}"
+                        stroke-dasharray="${circ}" stroke-dashoffset="${circ}" id="ringFg"></circle>
+                </svg>
+                <div class="ring-lbl"><b id="ringPct">0%</b><small>liberado</small></div>`;
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    document.getElementById('ringFg').style.strokeDashoffset = circ - (circ * pct) / 100;
+                    animateCounter(document.getElementById('ringPct'), pct, 1200);
+                }, 150);
+            });
+
+            // Comparativa NORTE vs SOGAMOSO
+            const norte = proyectos.filter(p => p.proyecto === 'NORTE');
+            const soga = proyectos.filter(p => p.proyecto === 'SOGAMOSO');
+            const pctNorte = norte.length ? Math.round((norte.filter(p => p.semaforo === 'verde').length / norte.length) * 100) : 0;
+            const pctSoga = soga.length ? Math.round((soga.filter(p => p.semaforo === 'verde').length / soga.length) * 100) : 0;
+            setTimeout(() => {
+                document.getElementById('barNorte').style.width = pctNorte + '%';
+                document.getElementById('barSoga').style.width = pctSoga + '%';
+            }, 200);
+            document.getElementById('valNorte').textContent = pctNorte + '%';
+            document.getElementById('valSoga').textContent = pctSoga + '%';
+            const stats = (arr, nombre) => {
+                const r = arr.filter(p => p.semaforo === 'rojo').length;
+                const a = arr.filter(p => p.semaforo === 'amarillo').length;
+                const v = arr.filter(p => p.semaforo === 'verde').length;
+                return `<span><b>${nombre}</b></span><span>🔴 ${r}</span><span>🟡 ${a}</span><span>🟢 ${v}</span>`;
+            };
+            document.getElementById('compStats').innerHTML = stats(norte, 'NORTE') + stats(soga, 'SOGAMOSO');
+        }
+
+        /* ================================================================
+           5. FILTRO ESTADO + RENDER TABLA CON SORT/PAGINACIÓN/RESALTADO
+        ================================================================ */
+        function populateEstadoFilter() {
+            const estados = [...new Set(proyectos.map(p => p.estadoConcreto).filter(e => e !== ''))].sort();
+            const select = document.getElementById('filtroEstado');
+            while (select.options.length > 1) select.remove(1);
+            estados.forEach(e => {
+                const opt = document.createElement('option');
+                opt.value = e;
+                opt.textContent = e;
+                select.appendChild(opt);
+            });
+        }
+
+        const estadoFiltros = {
+            proyecto: 'todos',
+            semaforo: 'todos',
+            estado: 'todos',
+            busqueda: ''
+        };
+        let sortKey = 'semaforo';
+        let sortOrder = 'asc';
+        let paginaActual = 1;
+        const porPagina = 8;
+
+        function aplicarFiltros() {
+            estadoFiltros.proyecto = document.getElementById('filtroProyecto').value;
+            estadoFiltros.semaforo = document.getElementById('filtroSemaforo').value;
+            estadoFiltros.estado = document.getElementById('filtroEstado').value;
+            estadoFiltros.busqueda = document.getElementById('filtroBusqueda').value.trim();
+            paginaActual = 1;
+            renderTabla();
+            renderChips();
+        }
+
+        function filtrarProyectos() {
+            const q = estadoFiltros.busqueda.toLowerCase();
+            return proyectos.filter(p => {
+                if (estadoFiltros.proyecto !== 'todos' && p.proyecto !== estadoFiltros.proyecto) return false;
+                if (estadoFiltros.semaforo !== 'todos' && p.semaforo !== estadoFiltros.semaforo) return false;
+                if (estadoFiltros.estado !== 'todos' && p.estadoConcreto !== estadoFiltros.estado) return false;
+                if (q) {
+                    return (p.municipio + ' ' + p.idPredio + ' ' + p.torres + ' ' + p.departamento + ' ' +
+                            p.proyecto + ' ' + p.estadoConcreto).toLowerCase().includes(q);
+                }
+                return true;
+            });
+        }
+
+        function resaltar(texto, q) {
+            if (!q) return esc(texto);
+            const idx = texto.toLowerCase().indexOf(q.toLowerCase());
+            if (idx === -1) return esc(texto);
+            return esc(texto.slice(0, idx)) + '<mark>' + esc(texto.slice(idx, idx + q.length)) + '</mark>' + esc(texto.slice(idx + q.length));
+        }
+
+        function renderTabla() {
+            let filtrados = filtrarProyectos();
+
+            // Ordenar
+            const orderMul = sortOrder === 'asc' ? 1 : -1;
+            filtrados.sort((a, b) => {
+                let va = a[sortKey], vb = b[sortKey];
+                if (typeof va === 'string') va = va.toLowerCase();
+                if (typeof vb === 'string') vb = vb.toLowerCase();
+                if (va < vb) return -1 * orderMul;
+                if (va > vb) return 1 * orderMul;
+                return 0;
+            });
+
+            const totalPaginas = Math.max(1, Math.ceil(filtrados.length / porPagina));
+            if (paginaActual > totalPaginas) paginaActual = totalPaginas;
+            const inicio = (paginaActual - 1) * porPagina;
+            const pagina = filtrados.slice(inicio, inicio + porPagina);
+            const q = estadoFiltros.busqueda;
+
+            document.getElementById('filaMostradas').textContent = filtrados.length;
+            document.getElementById('filaInfo').textContent = filtrados.length + ' registros';
+            document.getElementById('pageInfo').textContent = paginaActual + ' / ' + totalPaginas;
+            document.getElementById('pagePrev').disabled = paginaActual <= 1;
+            document.getElementById('pageNext').disabled = paginaActual >= totalPaginas;
+
+            const tbody = document.getElementById('tablaBody');
+            if (pagina.length === 0) {
+                tbody.innerHTML = `<tr class="empty-row"><td colspan="7"><i class="fas fa-search"></i>No se encontraron registros</td></tr>`;
+                return;
+            }
+
+            let html = '';
+            pagina.forEach(p => {
+                const tooltip = 'ID: ' + p.idPredio + ' | Torre: ' + (p.torres || 'N/A');
+                html += `<tr data-tooltip="${esc(tooltip)}">
+                    <td><span class="proye-tag ${p.proyecto === 'NORTE' ? 'norte' : 'soga'}">${resaltar(p.proyecto, q)}</span></td>
+                    <td>${resaltar(p.departamento, q)}</td>
+                    <td>${resaltar(p.municipio, q)}</td>
+                    <td>${resaltar(p.idPredio, q)}</td>
+                    <td>${p.torres ? resaltar(p.torres, q) : '-'}</td>
+                    <td>${p.estadoConcreto ? resaltar(p.estadoConcreto, q) : '-'}</td>
+                    <td>
+                        <span class="semafo ${p.semaforo}"></span>
+                        <span class="estado-badge ${p.semaforo}">${semaforoLabel(p.semaforo)}</span>
+                    </td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function renderChips() {
+            const cont = document.getElementById('chipsActivos');
+            cont.innerHTML = '';
+            const chips = [];
+            if (estadoFiltros.proyecto !== 'todos') chips.push(['proyecto', estadoFiltros.proyecto, 'Proyecto: ' + estadoFiltros.proyecto]);
+            if (estadoFiltros.semaforo !== 'todos') chips.push(['semaforo', estadoFiltros.semaforo, 'Semáforo: ' + semaforoIcon(estadoFiltros.semaforo) + ' ' + semaforoLabel(estadoFiltros.semaforo)]);
+            if (estadoFiltros.estado !== 'todos') chips.push(['estado', estadoFiltros.estado, 'Estado: ' + estadoFiltros.estado]);
+            if (estadoFiltros.busqueda) chips.push(['busqueda', estadoFiltros.busqueda, 'Buscar: "' + estadoFiltros.busqueda + '"']);
+            chips.forEach(c => {
+                const el = document.createElement('span');
+                el.className = 'chip';
+                el.innerHTML = c[2] + `<button title="Quitar filtro" data-chip="${c[0]}"><i class="fas fa-times"></i></button>`;
+                cont.appendChild(el);
+            });
+            cont.querySelectorAll('button').forEach(b => {
+                b.addEventListener('click', () => {
+                    const key = b.dataset.chip;
+                    if (key === 'proyecto') document.getElementById('filtroProyecto').value = 'todos';
+                    if (key === 'semaforo') document.getElementById('filtroSemaforo').value = 'todos';
+                    if (key === 'estado') document.getElementById('filtroEstado').value = 'todos';
+                    if (key === 'busqueda') document.getElementById('filtroBusqueda').value = '';
+                    aplicarFiltros();
+                });
+            });
+        }
+
+        function limpiarFiltros() {
+            document.getElementById('filtroProyecto').value = 'todos';
+            document.getElementById('filtroSemaforo').value = 'todos';
+            document.getElementById('filtroEstado').value = 'todos';
+            document.getElementById('filtroBusqueda').value = '';
+            aplicarFiltros();
+            mostrarToast('Filtros limpiados', 'success');
+        }
+
+        document.getElementById('btnLimpiar').addEventListener('click', limpiarFiltros);
+        document.getElementById('filtroProyecto').addEventListener('change', aplicarFiltros);
+        document.getElementById('filtroSemaforo').addEventListener('change', aplicarFiltros);
+        document.getElementById('filtroEstado').addEventListener('change', aplicarFiltros);
+        document.getElementById('filtroBusqueda').addEventListener('input', aplicarFiltros);
+        document.getElementById('pagePrev').addEventListener('click', () => { if (paginaActual > 1) { paginaActual--; renderTabla(); } });
+        document.getElementById('pageNext').addEventListener('click', () => { const total = Math.ceil(filtrarProyectos().length / porPagina); if (paginaActual < total) { paginaActual++; renderTabla(); } });
+
+        // Ordenamiento por columna
+        document.querySelectorAll('#tablaHead th').forEach(th => {
+            th.addEventListener('click', () => {
+                const key = th.dataset.sort;
+                if (sortKey === key) {
+                    sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+                } else {
+                    sortKey = key;
+                    sortOrder = 'asc';
+                }
+                document.querySelectorAll('#tablaHead th').forEach(t => t.classList.remove('active'));
+                th.classList.add('active');
+                th.querySelector('.sort-icon').className = 'sort-icon fas fa-sort-' + (sortOrder === 'asc' ? 'up' : 'down');
+                renderTabla();
+            });
+        });
+
+        // Click en fila => modal
+        document.getElementById('tablaBody').addEventListener('click', e => {
+            const tr = e.target.closest('tr');
+            if (!tr || tr.classList.contains('empty-row')) return;
+            const id = tr.children[3].textContent.trim().replace('<mark>', '').replace('</mark>', '');
+            const fila = proyectos.find(p => p.idPredio === id || p.idPredio.includes(id));
+            if (fila) abrirModal(fila);
+        });
+
+        /* ================================================================
+           6. GRÁFICAS CHART.JS
+        ================================================================ */
+        function textColor() { return getComputedStyle(document.documentElement).getPropertyValue('--chart-text').trim() || '#64748b'; }
+        function gridColor() { return getComputedStyle(document.documentElement).getPropertyValue('--chart-grid').trim() || 'rgba(0,0,0,0.06)'; }
+        function baseFont() { return { family: 'Inter, sans-serif', size: 11 }; }
+
+        const customLabelsPlugin = {
+            id: 'customLabels',
+            afterDraw(chart) {
+                const ctx = chart.ctx;
+                chart.data.datasets.forEach((ds, i) => {
+                    const meta = chart.getDatasetMeta(i);
+                    meta.data.forEach((bar, idx) => {
+                        const v = ds.data[idx];
+                        if (v === 0 || v == null) return;
+                        ctx.save();
+                        ctx.fillStyle = textColor();
+                        ctx.font = 'bold 12px Inter';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'bottom';
+                        ctx.fillText(v, bar.x, bar.y - 3);
+                        ctx.restore();
+                    });
+                });
+            }
+        };
+
+        let chartSemaforo, chartEstado, chartComparativa, chartMunicipios, chartTorres, chartGauge, chartTendencia, chartDeptos;
+
+        function initCharts() {
+            const rojos = proyectos.filter(p => p.semaforo === 'rojo').length;
+            const amarillos = proyectos.filter(p => p.semaforo === 'amarillo').length;
+            const verdes = proyectos.filter(p => p.semaforo === 'verde').length;
+            const total = proyectos.length;
+
+            /* ---- 6.1 Semáforo (donut con total al centro) ---- */
+            const elSemaforo = document.getElementById('chartSemaforo');
+            const ctxSemaforo = elSemaforo.getContext('2d');
+            chartSemaforo = new Chart(ctxSemaforo, {
+                type: 'doughnut',
+                data: {
+                    labels: ['🔴 Rojo', '🟡 Amarillo', '🟢 Verde'],
+                    datasets: [{
+                        data: [rojos, amarillos, verdes],
+                        backgroundColor: ['#ef4444', '#f1c40f', '#22c55e'],
+                        borderWidth: 3,
+                        borderColor: getComputedStyle(document.body).getPropertyValue('--card').trim() || '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '62%',
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: textColor(), font: baseFont(), boxWidth: 12 } },
+                        tooltip: { callbacks: { label: c => ` ${c.label}: ${c.parsed} predios` } }
+                    },
+                    onClick: (e, els) => {
+                        if (els.length) {
+                            const labels = ['rojo', 'amarillo', 'verde'];
+                            document.getElementById('filtroSemaforo').value = labels[els[0].index];
+                            aplicarFiltros();
+                        }
+                    }
+                },
+                plugins: [{
+                    id: 'centerText',
+                    afterDraw(chart) {
+                        const { ctx } = chart;
+                        const x = chart.chartArea.left + (chart.chartArea.right - chart.chartArea.left) / 2;
+                        const y = chart.chartArea.top + (chart.chartArea.bottom - chart.chartArea.top) / 2;
+                        ctx.save();
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillStyle = textColor();
+                        ctx.font = '800 26px Outfit';
+                        ctx.fillText(total, x, y - 9);
+                        ctx.font = '600 10px Inter';
+                        ctx.fillText('TOTAL', x, y + 11);
+                        ctx.restore();
+                    }
+                }]
+            });
+
+            /* ---- 6.2 Estado Concreto (barras) ---- */
+            const ctxEstado = document.getElementById('chartEstado').getContext('2d');
+            const estados = {};
+            proyectos.forEach(p => { if (p.estadoConcreto) estados[p.estadoConcreto] = (estados[p.estadoConcreto] || 0) + 1; });
+            const sortedEstados = Object.entries(estados).sort((a, b) => b[1] - a[1]);
+            const labelsEstados = sortedEstados.map(e => e[0]);
+            const dataEstados = sortedEstados.map(e => e[1]);
+            const coloresEstados = ['#22c55e', '#f1c40f', '#ef4444', '#38bdf8', '#a78bfa', '#2dd4bf', '#fb923c'];
+            chartEstado = new Chart(ctxEstado, {
+                type: 'bar',
+                data: {
+                    labels: labelsEstados,
+                    datasets: [{
+                        label: 'Cantidad',
+                        data: dataEstados,
+                        backgroundColor: coloresEstados.slice(0, labelsEstados.length),
+                        borderRadius: 8,
+                        borderSkipped: false,
+                        barPercentage: 0.65
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { callbacks: { label: c => ` ${c.parsed.y} predios` } }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: gridColor() }, ticks: { stepSize: 1, color: textColor(), font: baseFont() } },
+                        x: { grid: { display: false }, ticks: { color: textColor(), font: { size: 10, family: 'Inter' }, maxRotation: 45, minRotation: 0 } }
+                    },
+                    onClick: (e, els) => {
+                        if (els.length) {
+                            const estado = labelsEstados[els[0].index];
+                            const sel = document.getElementById('filtroEstado');
+                            const exists = Array.from(sel.options).some(o => o.value === estado);
+                            if (exists) sel.value = estado;
+                            else document.getElementById('filtroBusqueda').value = estado;
+                            aplicarFiltros();
+                        }
+                    }
+                },
+                plugins: [customLabelsPlugin]
+            });
+
+            /* ---- 6.3 Comparativa NORTE vs SOGAMOSO (apilada) ---- */
+            const ctxComp = document.getElementById('chartComparativa').getContext('2d');
+            const build = proy => [proy.filter(p => p.semaforo === 'rojo').length, proy.filter(p => p.semaforo === 'amarillo').length, proy.filter(p => p.semaforo === 'verde').length];
+            const norteArr = build(proyectos.filter(p => p.proyecto === 'NORTE'));
+            const sogaArr = build(proyectos.filter(p => p.proyecto === 'SOGAMOSO'));
+            chartComparativa = new Chart(ctxComp, {
+                type: 'bar',
+                data: {
+                    labels: ['NORTE', 'SOGAMOSO'],
+                    datasets: [
+                        { label: '🔴 Crítico', data: [norteArr[0], sogaArr[0]], backgroundColor: '#ef4444' },
+                        { label: '🟡 Alerta', data: [norteArr[1], sogaArr[1]], backgroundColor: '#f1c40f' },
+                        { label: '🟢 Liberado', data: [norteArr[2], sogaArr[2]], backgroundColor: '#22c55e' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: textColor(), font: baseFont(), boxWidth: 12 } },
+                        tooltip: { callbacks: { label: c => ` ${c.dataset.label}: ${c.parsed.y}` } }
+                    },
+                    scales: {
+                        x: { stacked: true, grid: { display: false }, ticks: { color: textColor(), font: baseFont() } },
+                        y: { stacked: true, beginAtZero: true, grid: { color: gridColor() }, ticks: { stepSize: 1, color: textColor(), font: baseFont() } }
+                    }
+                }
+            });
+
+            /* ---- 6.4 Top 8 municipios ---- */
+            const ctxMun = document.getElementById('chartMunicipios').getContext('2d');
+            const muns = {};
+            proyectos.forEach(p => { const m = p.municipio || 'Sin municipio'; muns[m] = (muns[m] || 0) + 1; });
+            const topMuns = Object.entries(muns).sort((a, b) => b[1] - a[1]).slice(0, 8);
+            chartMunicipios = new Chart(ctxMun, {
+                type: 'bar',
+                data: {
+                    labels: topMuns.map(m => m[0]),
+                    datasets: [{
+                        label: 'Predios',
+                        data: topMuns.map(m => m[1]),
+                        backgroundColor: ['#0072bc', '#00a651', '#f1c40f', '#ef4444', '#8b5cf6', '#06b6d4', '#f97316', '#64748b'],
+                        borderRadius: 8,
+                        borderSkipped: false
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { callbacks: { label: c => ` ${c.parsed.x} predios` } }
+                    },
+                    scales: {
+                        x: { beginAtZero: true, grid: { color: gridColor() }, ticks: { stepSize: 1, color: textColor(), font: baseFont() } },
+                        y: { grid: { display: false }, ticks: { color: textColor(), font: { size: 10, family: 'Inter' } } }
+                    },
+                    onClick: (e, els) => {
+                        if (els.length) {
+                            document.getElementById('filtroBusqueda').value = topMuns[els[0].index][0];
+                            aplicarFiltros();
+                        }
+                    }
+                },
+                plugins: [customLabelsPlugin]
+            });
+
+            /* ---- 6.5 Torres por tipo ---- */
+            const ctxTorres = document.getElementById('chartTorres').getContext('2d');
+            let vano = 0, numeros = 0, otros = 0;
+            proyectos.forEach(p => {
+                const t = (p.torres || '').trim().toUpperCase();
+                if (!t || t === 'VANO') vano++;
+                else if (/[0-9]/.test(t)) numeros++;
+                else otros++;
+            });
+            chartTorres = new Chart(ctxTorres, {
+                type: 'doughnut',
+                data: {
+                    labels: ['VANO', 'Con números', 'Otros'],
+                    datasets: [{
+                        data: [vano, numeros, otros],
+                        backgroundColor: ['#94a3b8', '#38bdf8', '#fb923c'],
+                        borderWidth: 3,
+                        borderColor: getComputedStyle(document.body).getPropertyValue('--card').trim() || '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '60%',
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: textColor(), font: baseFont(), boxWidth: 12 } },
+                        tooltip: { callbacks: { label: c => ` ${c.label}: ${c.parsed} predios` } }
+                    }
+                }
+            });
+
+            /* ---- 6.6 Gauge de liberación ---- */
+            const ctxGauge = document.getElementById('chartGauge').getContext('2d');
+            const pctLiberado = total ? Math.round((verdes / total) * 100) : 0;
+            const gaugeColor = pctLiberado >= 60 ? '#22c55e' : pctLiberado >= 30 ? '#f1c40f' : '#ef4444';
+            chartGauge = new Chart(ctxGauge, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Liberado', 'Pendiente'],
+                    datasets: [{
+                        data: [pctLiberado, 100 - pctLiberado],
+                        backgroundColor: [gaugeColor, 'rgba(148,163,184,0.25)'],
+                        borderWidth: 0,
+                        circumference: 270,
+                        rotation: 225
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '68%',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: false }
+                    }
+                },
+                plugins: [{
+                    id: 'gaugeText',
+                    afterDraw(chart) {
+                        const { ctx } = chart;
+                        const x = chart.chartArea.left + (chart.chartArea.right - chart.chartArea.left) / 2;
+                        const y = chart.chartArea.top + (chart.chartArea.bottom - chart.chartArea.top) / 2 + 6;
+                        ctx.save();
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillStyle = textColor();
+                        ctx.font = '800 28px Outfit';
+                        ctx.fillText(pctLiberado + '%', x, y - 6);
+                        ctx.font = '600 10px Inter';
+                        ctx.fillStyle = gaugeColor;
+                        ctx.fillText('LIBERADO', x, y + 16);
+                        ctx.restore();
+                    }
+                }]
+            });
+
+            /* ---- 6.7 Tendencia últimos 7 días (simulada) ---- */
+            const ctxTend = document.getElementById('chartTendencia').getContext('2d');
+            const dias = [];
+            const fec = new Date();
+            fec.setDate(fec.getDate() - 6);
+            for (let i = 0; i < 7; i++) {
+                const d = new Date(fec);
+                dias.push(d.toLocaleDateString('es-CO', { weekday: 'short' }));
+                fec.setDate(fec.getDate() + 1);
+            }
+            const base = Math.round(verdes / 7);
+            const vals = dias.map((_, i) => Math.max(1, Math.round(base * (0.7 + i * 0.08)) + (i % 3)));
+            chartTendencia = new Chart(ctxTend, {
+                type: 'line',
+                data: {
+                    labels: dias,
+                    datasets: [{
+                        label: 'Liberaciones acumuladas',
+                        data: vals,
+                        borderColor: '#00a651',
+                        backgroundColor: 'rgba(0,166,81,0.12)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#00a651'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { callbacks: { label: c => ` ${c.parsed.y} liberaciones` } }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: gridColor() }, ticks: { stepSize: 1, color: textColor(), font: baseFont() } },
+                        x: { grid: { display: false }, ticks: { color: textColor(), font: baseFont() } }
+                    }
+                }
+            });
+
+            /* ---- 6.8 Predios por departamento ---- */
+            const ctxDeptos = document.getElementById('chartDeptos').getContext('2d');
+            const deptos = {};
+            proyectos.forEach(p => { const d = p.departamento || 'Sin departamento'; deptos[d] = (deptos[d] || 0) + 1; });
+            const sortedDeptos = Object.entries(deptos).sort((a, b) => b[1] - a[1]);
+            chartDeptos = new Chart(ctxDeptos, {
+                type: 'bar',
+                data: {
+                    labels: sortedDeptos.map(d => d[0]),
+                    datasets: [{
+                        label: 'Predios',
+                        data: sortedDeptos.map(d => d[1]),
+                        backgroundColor: ['#2c3e50', '#e74c3c', '#f39c12'],
+                        borderRadius: 8,
+                        borderSkipped: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { callbacks: { label: c => ` ${c.parsed.y} predios` } }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: gridColor() }, ticks: { stepSize: 1, color: textColor(), font: baseFont() } },
+                        x: { grid: { display: false }, ticks: { color: textColor(), font: { size: 11, family: 'Inter', weight: 'bold' } } }
+                    }
+                },
+                plugins: [customLabelsPlugin]
+            });
+        }
+
+        /* ================================================================
+           7. MODAL DE DETALLE
+        ================================================================ */
+        function abrirModal(p) {
+            const body = document.getElementById('modalBody');
+            const porc = p.estadoConcreto ? '—' : '—';
+            body.innerHTML = `
+                <div class="detail-item"><div class="d-label">Proyecto</div><div class="d-value">${esc(p.proyecto)}</div></div>
+                <div class="detail-item"><div class="d-label">Departamento</div><div class="d-value">${esc(p.departamento)}</div></div>
+                <div class="detail-item"><div class="d-label">Municipio</div><div class="d-value">${esc(p.municipio)}</div></div>
+                <div class="detail-item"><div class="d-label">ID Predio</div><div class="d-value">${esc(p.idPredio)}</div></div>
+                <div class="detail-item"><div class="d-label">Torres</div><div class="d-value">${esc(p.torres || '-')}</div></div>
+                <div class="detail-item"><div class="d-label">Estado Concreto</div><div class="d-value">${esc(p.estadoConcreto || '-')}</div></div>
+                <div class="detail-item"><div class="d-label">Semáforo</div><div class="d-value"><span class="semafo ${p.semaforo}"></span> ${semaforoLabel(p.semaforo)}</div></div>
+                <div class="detail-item"><div class="d-label">Estado original</div><div class="d-value">${esc(p.estadoOriginal || '-')}</div></div>
+            `;
+            document.getElementById('modalSub').textContent = 'ID ' + p.idPredio;
+            document.getElementById('modalDetalle').classList.add('open');
+        }
+        document.getElementById('modalClose').addEventListener('click', () => document.getElementById('modalDetalle').classList.remove('open'));
+        document.getElementById('modalDetalle').addEventListener('click', e => {
+            if (e.target === e.currentTarget) document.getElementById('modalDetalle').classList.remove('open');
+        });
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') document.getElementById('modalDetalle').classList.remove('open');
+        });
+
+        /* ================================================================
+           8. ALERTAS
+        ================================================================ */
+function renderAlertas() {
+            // Solo alertan los predios con estado "amparo en trámite"
+            const criticos = proyectos.filter(p => {
+                const e = (p.estadoOriginal || '').toUpperCase().trim();
+                return e === 'AMPARO EN TRÁMITE' || e === 'AMPARO EN TRAMITE';
+            });
+            document.getElementById('alertCount').textContent = criticos.length;
+            document.getElementById('alertsBadge').textContent = criticos.length;
+            const list = document.getElementById('alertsList');
+            if (criticos.length === 0) {
+                list.innerHTML = `<div class="alert-item" style="justify-content:center;"><span>🎉 No hay alertas críticas</span></div>`;
+                return;
+            }
+            list.innerHTML = criticos.slice(0, 8).map(p => `
+                <div class="alert-item rojo">
+                    <div class="a-ico"><i class="fas fa-exclamation-triangle"></i></div>
+                    <div class="a-text">
+                        <b>${esc(p.municipio)} · ${esc(p.proyecto)}</b>
+                        <span>${esc(p.idPredio)} · ${esc(p.estadoConcreto || 'Sin estado')}</span>
+                    </div>
+                </div>`).join('');
+        }
+        function toggleAlertas() {
+            document.getElementById('alertsPanel').classList.toggle('open');
+        }
+        document.getElementById('alertsToggle').addEventListener('click', toggleAlertas);
+        document.getElementById('btnAlerts').addEventListener('click', toggleAlertas);
+        document.addEventListener('click', e => {
+            const panel = document.getElementById('alertsPanel');
+            if (panel.classList.contains('open') && !panel.contains(e.target) && e.target.id !== 'alertsToggle' && e.target.id !== 'btnAlerts') {
+                panel.classList.remove('open');
+            }
+        });
+
+        /* ================================================================
+           9. TOAST
+        ================================================================ */
+        let toastTimer;
+        function mostrarToast(msg, tipo = 'info') {
+            const toast = document.getElementById('toast');
+            toast.className = 'toast ' + tipo + ' show';
+            document.getElementById('toastMsg').textContent = msg;
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toast.classList.remove('show'), 2600);
+        }
+
+        /* ================================================================
+           10. TEMA CLARO / OSCURO
+        ================================================================ */
+        function aplicarTema(tema) {
+            document.documentElement.setAttribute('data-theme', tema);
+            const icon = document.getElementById('temaIcon');
+            if (tema === 'dark') {
+                icon.className = 'fas fa-sun';
+                mostrarToast('Modo oscuro activado', 'info');
+            } else {
+                icon.className = 'fas fa-moon';
+                mostrarToast('Modo claro activado', 'info');
+            }
+            localStorage.setItem('geb-theme', tema);
+            // Re-render de gráficas con nuevos colores
+            try {
+                chartSemaforo && chartSemaforo.update();
+                chartEstado && chartEstado.update();
+                chartComparativa && chartComparativa.update();
+                chartMunicipios && chartMunicipios.update();
+                chartTorres && chartTorres.update();
+                chartGauge && chartGauge.update();
+                chartTendencia && chartTendencia.update();
+                chartDeptos && chartDeptos.update();
+            } catch (err) { console.warn(err); }
+        }
+        document.getElementById('btnTema').addEventListener('click', () => {
+            const actual = document.documentElement.getAttribute('data-theme');
+            aplicarTema(actual === 'dark' ? 'light' : 'dark');
+        });
+
+        /* ================================================================
+           11. RELOJ EN VIVO
+        ================================================================ */
+        function actualizarReloj() {
+            const ahora = new Date();
+            document.getElementById('relojTiempo').textContent = ahora.toLocaleTimeString('es-CO', { hour12: false });
+            document.getElementById('relojFecha').textContent = ahora.toLocaleDateString('es-CO', {
+                weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+            });
+        }
+        setInterval(actualizarReloj, 1000);
+        actualizarReloj();
+        document.getElementById('fechaActualizacion').textContent = new Date().toLocaleString('es-CO');
+
+        /* ================================================================
+           12. EXPORTAR CSV
+        ================================================================ */
+        document.getElementById('btnExportarCSV').addEventListener('click', () => {
+            const filas = filtrarProyectos();
+            const header = ['Proyecto', 'Departamento', 'Municipio', 'ID Predio', 'Torres', 'Estado Concreto', 'Semáforo'];
+            const csv = [header.join(';')].concat(filas.map(p =>
+                [p.proyecto, p.departamento, p.municipio, p.idPredio, p.torres, p.estadoConcreto, p.semaforo].join(';')
+            )).join('\n');
+            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'predios_' + new Date().toISOString().slice(0, 10) + '.csv';
+            a.click();
+            URL.revokeObjectURL(a.href);
+            mostrarToast(filas.length + ' registros exportados a CSV', 'success');
+        });
+
+        /* ================================================================
+           13. IMPRIMIR / PDF
+        ================================================================ */
+        document.getElementById('btnImprimir').addEventListener('click', () => {
+            mostrarToast('Generando reporte…', 'info');
+            setTimeout(() => window.print(), 400);
+        });
+
+        /* ================================================================
+           14. INICIO
+        ================================================================ */
+        (function init() {
+            // Tema guardado
+            const temaGuardado = localStorage.getItem('geb-theme');
+            if (temaGuardado) aplicarTema(temaGuardado);
+
+            renderKpis();
+            populateEstadoFilter();
+            renderTabla();
+            renderChips();
+            renderAlertas();
+            initCharts();
+
+            console.log('✅ GEB Dashboard profesional cargado. Total:', proyectos.length);
+        })();
+    </script>
+</body>
+</html>
+
