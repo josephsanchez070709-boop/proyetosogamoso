@@ -1630,12 +1630,8 @@
         /* ================================================================
            8. ALERTAS
         ================================================================ */
-function renderAlertas() {
-            // Solo alertan los predios con estado "amparo en trámite"
-            const criticos = proyectos.filter(p => {
-                const e = (p.estadoOriginal || '').toUpperCase().trim();
-                return e === 'AMPARO EN TRÁMITE' || e === 'AMPARO EN TRAMITE';
-            });
+        function renderAlertas() {
+            const criticos = proyectos.filter(p => p.semaforo === 'rojo');
             document.getElementById('alertCount').textContent = criticos.length;
             document.getElementById('alertsBadge').textContent = criticos.length;
             const list = document.getElementById('alertsList');
